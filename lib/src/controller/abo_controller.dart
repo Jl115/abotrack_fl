@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:abotrack_fl/main.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+
 import 'package:path_provider/path_provider.dart';
 
 class Abo {
@@ -47,26 +50,58 @@ class AboController with ChangeNotifier {
 
   List<Abo> get abos => _filteredAbos.isNotEmpty ? _filteredAbos : _abos;
 
+  Future<File> _getAboFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File('${directory.path}/abos.json');
+  }
+
   Future<void> loadAbos() async {
-    final file = await _getAboFile();
-    if (await file.exists()) {
-      final jsonString = await file.readAsString();
-      final List<dynamic> jsonList = json.decode(jsonString);
-      _abos = jsonList.map((json) => Abo.fromJson(json)).toList();
-      notifyListeners();
+    try {
+      final file = await _getAboFile();
+      if (await file.exists()) {
+        final jsonString = await file.readAsString();
+        final List<dynamic> jsonList = json.decode(jsonString);
+        _abos = jsonList.map((json) => Abo.fromJson(json)).toList();
+        _filteredAbos.clear(); // Clear any previous filters
+        notifyListeners(); // Notify to update the UI
+        print("Abos loaded successfully: ${_abos.length} entries");
+      } else {
+        print("No existing Abo file found.");
+      }
+    } catch (e) {
+      print("Error loading Abos: $e");
     }
   }
 
+  double getMonthlyCost() {
+    double total = 0.0;
+    for (var abo in _abos) {
+      if (abo.isMonthly) {
+        total += abo.price;
+      } else {
+        total +=
+            (abo.price / 12); // Estimate monthly cost for yearly subscriptions
+      }
+    }
+    return total;
+  }
+
   Future<void> saveAbos() async {
-    final file = await _getAboFile();
-    final jsonList = _abos.map((abo) => abo.toJson()).toList();
-    await file.writeAsString(json.encode(jsonList));
+    try {
+      final file = await _getAboFile();
+      final jsonList = _abos.map((abo) => abo.toJson()).toList();
+      await file.writeAsString(json.encode(jsonList));
+      print("Abos saved successfully to ${file.path}");
+    } catch (e) {
+      print("Error saving Abos: $e");
+    }
   }
 
   void addAbo(String name, double price, bool isMonthly, DateTime startDate,
       DateTime endDate) {
+    var uuid = const Uuid();
     final newAbo = Abo(
-      id: DateTime.now().toString(),
+      id: uuid.v4(), // Generate a unique ID
       startDate: startDate,
       endDate: endDate,
       price: price,
@@ -99,12 +134,7 @@ class AboController with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<File> _getAboFile() async {
-    final directory = await getApplicationDocumentsDirectory();
-    return File('${directory.path}/abos.json');
-  }
-
-  void showEditAboDialog(BuildContext context, Abo abo) {
+  showEditAboDialog(BuildContext context, Abo abo) {
     final TextEditingController nameController =
         TextEditingController(text: abo.name);
     final TextEditingController priceController =
@@ -315,7 +345,7 @@ class AboController with ChangeNotifier {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
@@ -333,7 +363,7 @@ class AboController with ChangeNotifier {
                           }
                         },
                         child: Text(
-                            'Start Date: ${startDate.toLocal()}'.split(' ')[0]),
+                            'Start Date: ${startDate.toLocal().toString().split(' ')[0]}'),
                       ),
                       TextButton(
                         onPressed: () async {
@@ -350,7 +380,7 @@ class AboController with ChangeNotifier {
                           }
                         },
                         child: Text(
-                            'End Date: ${endDate.toLocal()}'.split(' ')[0]),
+                            'End Date: ${endDate.toLocal().toString().split(' ')[0]}'),
                       ),
                     ],
                   ),
@@ -369,7 +399,10 @@ class AboController with ChangeNotifier {
                     final priceText = priceController.text;
 
                     if (name.isEmpty || priceText.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      Navigator.of(context).pop();
+                      // Using navigatorKey context to ensure that it is attached to the Scaffold.
+                      ScaffoldMessenger.of(navigatorKey.currentContext!)
+                          .showSnackBar(
                         const SnackBar(
                           content: Text('Please enter all fields'),
                         ),
@@ -377,19 +410,22 @@ class AboController with ChangeNotifier {
                     } else {
                       final price = double.tryParse(priceText);
                       if (price == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(navigatorKey.currentContext!)
+                            .showSnackBar(
                           const SnackBar(
                             content: Text('Invalid price value'),
                           ),
                         );
                       } else {
                         addAbo(name, price, isMonthly, startDate, endDate);
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(navigatorKey.currentContext!)
+                            .showSnackBar(
                           const SnackBar(
                             content: Text('Subscription added successfully'),
                           ),
                         );
-                        Navigator.of(context).pop();
                       }
                     }
                   },

@@ -29,14 +29,40 @@ class DashboardView extends StatelessWidget {
       extendBodyBehindAppBar: true,
       extendBody: true,
       drawer: drawer.customDrawer(context),
-      body: ListView(
-        physics: Theme.of(context).platform == TargetPlatform.iOS
-            ? const ClampingScrollPhysics() // For a more rigid scroll on iOS
-            : const AlwaysScrollableScrollPhysics(), // Allow normal scroll on Android
+      body: Stack(
         children: [
-          ChartComponent(),
-          const SizedBox(height: 20),
-          AbooListComponent(),
+          ListView(
+            physics: Theme.of(context).platform == TargetPlatform.iOS
+                ? const ClampingScrollPhysics() // For a more rigid scroll on iOS
+                : const AlwaysScrollableScrollPhysics(), // Allow normal scroll on Android
+            children: const [
+              ChartComponent(),
+              SizedBox(height: 20),
+              AboListComponent(),
+            ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 50,
+            child: Center(
+              child: Container(
+                  padding: const EdgeInsets.all(8),
+                  height: 58,
+                  width: 250,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    color: const Color.fromARGB(232, 222, 248, 248),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Monthly cost: ${aboController.getMonthlyCost().toStringAsFixed(2)}\$',
+                    ),
+                  )),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
+import 'package:intl/intl.dart';
 
 class ChartComponent extends StatefulWidget {
   const ChartComponent({super.key});
@@ -22,9 +23,26 @@ class _ChartComponentState extends State<ChartComponent> {
   Widget _buildLineChart(List<double> monthlyPayments) {
     return Center(
       child: SizedBox(
-        height: 200,
+        height: 350,
         child: LineChart(
           LineChartData(
+            titlesData: FlTitlesData(
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (value, meta) {
+                    final month = DateFormat.MMM()
+                        .format(DateTime(2024, value.toInt() + 1));
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(month,
+                          style: const TextStyle(
+                              fontSize: 12)), // Increased font size
+                    );
+                  },
+                ),
+              ),
+            ),
             lineBarsData: [
               LineChartBarData(
                 spots: monthlyPayments
@@ -33,8 +51,11 @@ class _ChartComponentState extends State<ChartComponent> {
                     .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
                     .toList(),
                 isCurved: true,
-                barWidth: 3,
-                dotData: FlDotData(show: false),
+                barWidth: 5, // Slightly thicker line for better visibility
+                dotData: const FlDotData(
+                    show: true), // Show dots to make data points clearer
+                belowBarData: BarAreaData(
+                    show: true, color: Colors.lightBlue.withOpacity(0.3)),
               ),
             ],
           ),
@@ -44,9 +65,11 @@ class _ChartComponentState extends State<ChartComponent> {
   }
 
   Widget _buildBarChart(List<double> monthlyPayments) {
+    final currentMonth = DateTime.now().month - 1; // 0-based index for month
+
     return Center(
       child: SizedBox(
-        height: 200,
+        height: 350, // Increased height for better readability
         child: BarChart(
           BarChartData(
             barGroups: monthlyPayments
@@ -54,9 +77,47 @@ class _ChartComponentState extends State<ChartComponent> {
                 .entries
                 .map((entry) => BarChartGroupData(
                       x: entry.key,
-                      barRods: [BarChartRodData(toY: entry.value)],
+                      barRods: [
+                        BarChartRodData(
+                          toY: entry.value,
+                          color: entry.key == currentMonth
+                              ? Colors.red
+                              : Colors.blue, // Highlight current month in red
+                          width: 16, // Increase bar width for better visibility
+                        ),
+                      ],
                     ))
                 .toList(),
+            titlesData: FlTitlesData(
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (value, meta) {
+                    final month = DateFormat.MMM()
+                        .format(DateTime(2024, value.toInt() + 1));
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                        child:
+                            Text(month, style: const TextStyle(fontSize: 12)),
+                      ), // Increased font size
+                    );
+                  },
+                ),
+              ),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 40,
+                  getTitlesWidget: (value, meta) {
+                    return Text(value.toStringAsFixed(0),
+                        style: const TextStyle(fontSize: 12));
+                  },
+                ),
+              ),
+            ),
+            gridData: const FlGridData(show: true),
           ),
         ),
       ),
@@ -66,7 +127,7 @@ class _ChartComponentState extends State<ChartComponent> {
   Widget _buildPieChart(List<Abo> abos) {
     return Center(
       child: SizedBox(
-        height: 200,
+        height: 350, // Increased height for better readability
         child: PieChart(
           PieChartData(
             sections: abos
@@ -75,8 +136,9 @@ class _ChartComponentState extends State<ChartComponent> {
                 .map((entry) => PieChartSectionData(
                       color: _getColorForIndex(entry.key),
                       value: entry.value.price,
-                      title: entry.value.name,
-                      radius: 50,
+                      title:
+                          '${entry.value.name}\n${entry.value.price.toStringAsFixed(2)}',
+                      radius: 60, // Increased radius for better visibility
                       titleStyle: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -84,6 +146,8 @@ class _ChartComponentState extends State<ChartComponent> {
                       ),
                     ))
                 .toList(),
+            sectionsSpace:
+                2, // Spacing between sections for better differentiation
           ),
         ),
       ),
@@ -109,14 +173,17 @@ class _ChartComponentState extends State<ChartComponent> {
     final aboController = Provider.of<AboController>(context);
 
     // Calculate monthly payments, converting yearly to equivalent monthly
-    final monthlyPayments = aboController.abos.map((abo) {
-      return abo.isMonthly ? abo.price : abo.price / 12;
-    }).toList();
+    final monthlyPayments = List.generate(12, (index) => 0.0);
+    for (var abo in aboController.abos) {
+      int startMonth = abo.startDate.month - 1;
+      double monthlyCost = abo.isMonthly ? abo.price : abo.price / 12;
+      monthlyPayments[startMonth] += monthlyCost;
+    }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
-        height: 300,
+        height: 400, // Increased container height for better readability
         decoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -127,7 +194,8 @@ class _ChartComponentState extends State<ChartComponent> {
           children: [
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(
+                    top: 16.0, bottom: 16.0, left: 16.0, right: 16.0),
                 child: _currentGraph == 0
                     ? _buildLineChart(monthlyPayments)
                     : _currentGraph == 1

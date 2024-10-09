@@ -6,6 +6,9 @@ import 'package:provider/provider.dart';
 
 import 'controller/settings_controller.dart';
 
+// Define the global navigatorKey
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -23,6 +26,7 @@ class MyApp extends StatelessWidget {
                 .login; // Always start with LoginView to enter the password
 
         return MaterialApp(
+          navigatorKey: navigatorKey, // Attach the navigatorKey here
           restorationScopeId: 'app',
           initialRoute: initialRoute, // Set initial route to login
           localizationsDelegates: const [

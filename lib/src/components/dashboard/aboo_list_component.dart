@@ -3,13 +3,15 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
 
-class AbooListComponent extends StatelessWidget {
+class AboListComponent extends StatelessWidget {
+  const AboListComponent({super.key});
+
   @override
   Widget build(BuildContext context) {
     final aboController = Provider.of<AboController>(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
+      padding: const EdgeInsets.symmetric(horizontal: 25),
       child: Container(
         height: 780,
         decoration: ShapeDecoration(
@@ -43,8 +45,8 @@ class AbooListComponent extends StatelessWidget {
                         },
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
                         icon: Icons.edit,
-                        label: 'Edit',
                       ),
                     ],
                   ),
@@ -58,8 +60,8 @@ class AbooListComponent extends StatelessWidget {
                         },
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
                         icon: Icons.delete,
-                        label: 'Delete',
                       ),
                     ],
                   ),
@@ -89,14 +91,12 @@ class AbooListComponent extends StatelessWidget {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              'Start Date: ${abo.startDate.toLocal()}'
-                                  .split(' ')[0],
+                              'Start Date: ${abo.startDate.toLocal().toString().split(' ')[0]}',
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 12),
                             ),
                             Text(
-                              'End Date: ${abo.endDate.toLocal()}'
-                                  .split(' ')[0],
+                              'End Date: ${abo.endDate.toLocal().toString().split(' ')[0]}',
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 12),
                             ),

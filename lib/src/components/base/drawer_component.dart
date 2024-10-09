@@ -18,7 +18,7 @@ class DrawerComponent {
       width: 150,
       child: Column(
         children: [
-          SizedBox(height: 50, width: 60),
+          const SizedBox(height: 50, width: 60),
           SizedBox(
             height: 60,
             width: 100,

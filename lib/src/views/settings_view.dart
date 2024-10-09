@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../controller/settings_controller.dart';
 
 class SettingsView extends StatelessWidget {
-  SettingsView({Key? key}) : super(key: key);
+  SettingsView({super.key});
 
   static const routeName = '/settings';
 
@@ -41,10 +41,10 @@ class SettingsView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                       width: 60,
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           'Theme',
                           style: TextStyle(
