@@ -49,7 +49,7 @@ class DashboardView extends StatelessWidget {
 
   Widget _buildStyledListView() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Container(
         height: 780,
         decoration: ShapeDecoration(
