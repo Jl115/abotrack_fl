@@ -1,3 +1,4 @@
+import 'package:abotrack_fl/src/views/abo_view.dart';
 import 'package:abotrack_fl/src/views/dashboard_view.dart';
 import 'package:abotrack_fl/src/views/settings_view.dart';
 import 'package:flutter/material.dart';
@@ -11,16 +12,16 @@ class DrawerComponent {
     return _instance!;
   }
 
-  // Accept BuildContext as a parameter
   Drawer customDrawer(BuildContext context) {
     return Drawer(
       backgroundColor: const Color.fromARGB(255, 150, 142, 142),
       width: 150,
-      child: ListView(
+      child: Column(
         children: [
+          SizedBox(height: 50, width: 60),
           SizedBox(
-            height: 50,
-            width: 60,
+            height: 60,
+            width: 100,
             child: Center(
               child: TextButton(
                 onPressed: () {
@@ -36,8 +37,26 @@ class DrawerComponent {
             ),
           ),
           SizedBox(
-            height: 50,
-            width: 60,
+            height: 60,
+            width: 100,
+            child: Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AboView(),
+                    ),
+                  );
+                },
+                child: const Text('All Abo\'s'),
+              ),
+            ),
+          ),
+          const Spacer(),
+          SizedBox(
+            height: 60,
+            width: 100,
             child: Center(
               child: TextButton(
                 onPressed: () {

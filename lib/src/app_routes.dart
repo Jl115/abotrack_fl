@@ -1,8 +1,8 @@
 import 'package:abotrack_fl/src/views/abo_view.dart';
 import 'package:abotrack_fl/src/views/dashboard_view.dart';
 import 'package:abotrack_fl/src/views/login_view.dart';
-import 'package:flutter/material.dart';
 import 'package:abotrack_fl/src/views/settings_view.dart';
+import 'package:flutter/material.dart';
 import 'package:abotrack_fl/src/controller/settings_controller.dart';
 
 class AppRoutes {
@@ -13,7 +13,15 @@ class AppRoutes {
 
   static Route<dynamic> generateRoute(
       RouteSettings routeSettings, SettingsController settingsController) {
-    // Specify type
+    // If the user has not set a password, default to the login page
+    if (settingsController.password == null && routeSettings.name != login) {
+      return MaterialPageRoute(
+        builder: (context) => const LoginView(),
+        settings: routeSettings,
+      );
+    }
+
+    // Specify routes
     switch (routeSettings.name) {
       case login:
         return MaterialPageRoute(
@@ -27,7 +35,7 @@ class AppRoutes {
         );
       case abo:
         return MaterialPageRoute(
-          builder: (context) => const AboView(),
+          builder: (context) => AboView(),
           settings: routeSettings,
         );
       case settings:
@@ -37,7 +45,7 @@ class AppRoutes {
         );
       default:
         return MaterialPageRoute(
-          builder: (context) => DashboardView(),
+          builder: (context) => const LoginView(),
           settings: routeSettings,
         );
     }

@@ -11,15 +11,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access the SettingsController from the Provider
     final settingsController = Provider.of<SettingsController>(context);
 
     return ListenableBuilder(
-      listenable:
-          settingsController, // Set the listenable to the SettingsController
+      listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
+        // Determine the initial route based on whether a password exists
+        final initialRoute = settingsController.password == null
+            ? AppRoutes.login
+            : AppRoutes
+                .login; // Always start with LoginView to enter the password
+
         return MaterialApp(
           restorationScopeId: 'app',
+          initialRoute: initialRoute, // Set initial route to login
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -27,14 +32,13 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [
-            Locale('en', ''), // English, no country code
+            Locale('en', ''),
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
-          themeMode: settingsController
-              .themeMode, // Use the themeMode from the controller
+          themeMode: settingsController.themeMode,
           onGenerateRoute: (RouteSettings routeSettings) {
             return AppRoutes.generateRoute(routeSettings, settingsController);
           },
