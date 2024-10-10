@@ -1,0 +1,186 @@
+@startuml
+set namespaceSeparator ::
+
+class "abotrack_fl::src::models::abo.dart::Abo" {
+  +String id
+  +DateTime startDate
+  +DateTime endDate
+  +double price
+  +bool isMonthly
+  +Map<String, dynamic> toJson()
+}
+
+class "abotrack_fl::src::models::settings.dart::Settings" {
+  +ThemeMode themeMode
+  +String? password
+  +Map<String, dynamic> toJson()
+}
+
+"abotrack_fl::src::models::settings.dart::Settings" o-- "flutter::src::material::app.dart::ThemeMode"
+
+class "abotrack_fl::src::controller::settings_controller.dart::SettingsController" {
+  -SettingsService _settingsService
+  -ThemeMode _themeMode
+  -String? _password
+  +ThemeMode themeMode
+  +String? password
+  +dynamic loadSettings()
+  +dynamic updateThemeMode()
+  +dynamic updatePassword()
+}
+
+"abotrack_fl::src::controller::settings_controller.dart::SettingsController" o-- "abotrack_fl::src::service::settings_service.dart::SettingsService"
+"abotrack_fl::src::controller::settings_controller.dart::SettingsController" o-- "flutter::src::material::app.dart::ThemeMode"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "abotrack_fl::src::controller::settings_controller.dart::SettingsController"
+
+class "abotrack_fl::src::controller::abo_controller.dart::Abo" {
+  +String id
+  +DateTime startDate
+  +DateTime endDate
+  +double price
+  +bool isMonthly
+  +String name
+  +Map<String, dynamic> toJson()
+}
+
+class "abotrack_fl::src::controller::abo_controller.dart::AboController" {
+  -List<Abo> _abos
+  -List<Abo> _filteredAbos
+  +List<Abo> abos
+  -dynamic _getAboFile()
+  +dynamic loadAbos()
+  +double getMonthlyCost()
+  +dynamic saveAbos()
+  +void addAbo()
+  +void editAbo()
+  +void deleteAbo()
+  +dynamic showEditAboDialog()
+  +void showAddAboDialog()
+  +void filterByOldest()
+  +void filterByNewest()
+  +void clearFilter()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "abotrack_fl::src::controller::abo_controller.dart::AboController"
+
+class "abotrack_fl::src::app_routes.dart::AppRoutes" {
+  {static} +String login
+  {static} +String dashboard
+  {static} +String settings
+  {static} +String abo
+  {static} +Route<dynamic> generateRoute()
+}
+
+class "abotrack_fl::src::components::dashboard::aboo_list_component.dart::AboListComponent" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::components::dashboard::aboo_list_component.dart::AboListComponent"
+
+class "abotrack_fl::src::components::dashboard::chart_component.dart::ChartComponent" {
+  +_ChartComponentState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "abotrack_fl::src::components::dashboard::chart_component.dart::ChartComponent"
+
+class "abotrack_fl::src::components::dashboard::chart_component.dart::_ChartComponentState" {
+  -int _currentGraph
+  -void _changeGraph()
+  -Widget _buildLineChart()
+  -Widget _buildBarChart()
+  -Widget _buildPieChart()
+  -Color _getColorForIndex()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "abotrack_fl::src::components::dashboard::chart_component.dart::_ChartComponentState"
+
+class "abotrack_fl::src::components::Login::submit_button.dart::SubmitButton" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::components::Login::submit_button.dart::SubmitButton"
+
+class "abotrack_fl::src::components::Login::password_submit_button.dart::PasswordSubmitButton" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::components::Login::password_submit_button.dart::PasswordSubmitButton"
+
+class "abotrack_fl::src::components::Login::password_input.dart::PasswordInput" {
+  +TextEditingController controller
+  +Widget build()
+}
+
+"abotrack_fl::src::components::Login::password_input.dart::PasswordInput" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::components::Login::password_input.dart::PasswordInput"
+
+class "abotrack_fl::src::components::base::drawer_component.dart::DrawerComponent" {
+  {static} -DrawerComponent? _instance
+  +Drawer customDrawer()
+}
+
+"abotrack_fl::src::components::base::drawer_component.dart::DrawerComponent" o-- "abotrack_fl::src::components::base::drawer_component.dart::DrawerComponent"
+
+class "abotrack_fl::src::service::settings_service.dart::Settings" {
+  +ThemeMode themeMode
+  +String? password
+  +Map<String, dynamic> toJson()
+}
+
+"abotrack_fl::src::service::settings_service.dart::Settings" o-- "flutter::src::material::app.dart::ThemeMode"
+
+class "abotrack_fl::src::service::settings_service.dart::SettingsService" {
+  +dynamic loadSettings()
+  +dynamic saveSettings()
+  +dynamic themeMode()
+  +dynamic updateThemeMode()
+  +dynamic getPassword()
+  +dynamic updatePassword()
+  -dynamic _getSettingsFile()
+}
+
+class "abotrack_fl::src::views::login_view.dart::LoginView" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::views::login_view.dart::LoginView"
+
+class "abotrack_fl::src::views::settings_view.dart::SettingsView" {
+  {static} +String routeName
+  +DrawerComponent drawer
+  +Widget build()
+  -void _showChangePasswordDialog()
+}
+
+"abotrack_fl::src::views::settings_view.dart::SettingsView" o-- "abotrack_fl::src::components::base::drawer_component.dart::DrawerComponent"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::views::settings_view.dart::SettingsView"
+
+class "abotrack_fl::src::views::dashboard_view.dart::DashboardView" {
+  {static} +String dashboard
+  {static} +String settings
+  {static} +String abo
+  +DrawerComponent drawer
+  +Widget build()
+}
+
+"abotrack_fl::src::views::dashboard_view.dart::DashboardView" o-- "abotrack_fl::src::components::base::drawer_component.dart::DrawerComponent"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::views::dashboard_view.dart::DashboardView"
+
+class "abotrack_fl::src::views::abo_view.dart::AboView" {
+  {static} +String abo
+  +DrawerComponent drawer
+  +Widget build()
+}
+
+"abotrack_fl::src::views::abo_view.dart::AboView" o-- "abotrack_fl::src::components::base::drawer_component.dart::DrawerComponent"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::views::abo_view.dart::AboView"
+
+class "abotrack_fl::src::app.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "abotrack_fl::src::app.dart::MyApp"
+
+
+@enduml
