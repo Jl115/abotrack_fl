@@ -2,7 +2,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url "${project(':background_fetch').projectDir}/libs" }
     }
+}
+ext {
+    compileSdkVersion   = 33// or higher / as desired
+    targetSdkVersion    = 33// or higher / as desired
 }
 
 rootProject.buildDir = "../build"

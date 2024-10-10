@@ -1,16 +1,5 @@
-import androidx.work.Configuration
-import io.flutter.app.FlutterApplication
-import io.flutter.plugins.workmanager.WorkmanagerPlugin
+package com.example.abotrack_fl
 
-class MyApplication : FlutterApplication(), Configuration.Provider {
-  override fun onCreate() {
-    super.onCreate()
-    WorkmanagerPlugin.setPluginRegistrantCallback { registry ->
-      // Register your WorkManager tasks here
-    }
-  }
+import io.flutter.embedding.android.FlutterActivity
 
-  override fun getWorkManagerConfiguration(): Configuration {
-    return Configuration.Builder().setMinimumLoggingLevel(android.util.Log.DEBUG).build()
-  }
-}
+class MainActivity: FlutterActivity()
