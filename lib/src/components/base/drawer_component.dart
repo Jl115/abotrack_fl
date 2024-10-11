@@ -24,8 +24,11 @@ class DrawerComponent {
   ///
   /// The function returns a Drawer widget with the above layout and properties.
   Drawer customDrawer(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Drawer(
-      backgroundColor: const Color.fromARGB(255, 150, 142, 142),
+      backgroundColor:
+          theme.scaffoldBackgroundColor, // Use theme background color
       width: 150,
       child: Column(
         children: [
@@ -43,7 +46,7 @@ class DrawerComponent {
                     ),
                   );
                 },
-                child: const Text('Dashboard'),
+                child: Text('Dashboard', style: theme.textTheme.labelSmall),
               ),
             ),
           ),
@@ -60,7 +63,7 @@ class DrawerComponent {
                     ),
                   );
                 },
-                child: const Text('All Abo\'s'),
+                child: Text('All Abo\'s', style: theme.textTheme.labelSmall),
               ),
             ),
           ),
@@ -78,7 +81,7 @@ class DrawerComponent {
                     ),
                   );
                 },
-                child: const Text('Settings'),
+                child: Text('Settings', style: theme.textTheme.labelSmall),
               ),
             ),
           ),

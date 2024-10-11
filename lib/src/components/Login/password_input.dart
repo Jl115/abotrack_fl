@@ -9,22 +9,30 @@ class PasswordInput extends StatelessWidget {
 
   /// Builds a widget for inputting a password.
   ///
-  /// The widget is a TextFormField with a specific style and decoration.
+  /// The widget is a TextFormField with a style and decoration that
+  /// adapts to the current theme.
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Get current theme
+
     return Container(
       width: 254,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF5A5656),
+        color: theme.cardColor, // Use card color from the current theme
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextFormField(
         controller: controller,
         obscureText: true,
-        style: const TextStyle(color: Colors.white),
-        decoration: const InputDecoration(
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: theme
+              .colorScheme.onSurface, // Use color from theme for input text
+        ),
+        decoration: InputDecoration(
           hintText: 'Enter your Password',
-          hintStyle: TextStyle(color: Colors.white54),
+          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.hintColor, // Use theme's hint color
+          ),
           border: InputBorder.none,
         ),
       ),

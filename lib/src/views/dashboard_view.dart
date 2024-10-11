@@ -31,10 +31,12 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     final aboController = Provider.of<AboController>(context);
 
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 150, 142, 142),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         shadowColor: Colors.transparent,
         elevation: 0,
         toolbarOpacity: 1,
@@ -67,11 +69,12 @@ class DashboardView extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    color: const Color.fromARGB(232, 222, 248, 248),
+                    color: theme.cardColor,
                   ),
                   child: Center(
                     child: Text(
                       'Monthly cost: ${aboController.getMonthlyCost().toStringAsFixed(2)}\$',
+                      style: theme.textTheme.bodyLarge,
                     ),
                   )),
             ),
@@ -80,7 +83,7 @@ class DashboardView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => aboController.showAddAboDialog(context),
-        backgroundColor: const Color.fromARGB(232, 222, 248, 248),
+        backgroundColor: theme.floatingActionButtonTheme.backgroundColor,
         child: const Icon(Icons.add), // Add icon
       ),
     );

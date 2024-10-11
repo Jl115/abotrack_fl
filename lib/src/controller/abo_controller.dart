@@ -188,7 +188,7 @@ class AboController with ChangeNotifier {
     notifyListeners();
   }
 
-  showEditAboDialog(BuildContext context, Abo abo) {
+  void showEditAboDialog(BuildContext context, Abo abo) {
     final TextEditingController nameController =
         TextEditingController(text: abo.name);
     final TextEditingController priceController =
@@ -196,6 +196,7 @@ class AboController with ChangeNotifier {
     bool isMonthly = abo.isMonthly;
     DateTime startDate = abo.startDate;
     DateTime endDate = abo.endDate;
+    final theme = Theme.of(context); // Get current theme
 
     showDialog(
       context: context,
@@ -203,31 +204,41 @@ class AboController with ChangeNotifier {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Edit Subscription'),
+              title: Text(
+                'Edit Subscription',
+                style: theme.textTheme.headlineSmall,
+              ),
+              backgroundColor: theme.dialogBackgroundColor,
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: nameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Name',
+                      labelStyle: theme.textTheme.bodyMedium,
                     ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: priceController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Price',
+                      labelStyle: theme.textTheme.bodyMedium,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text('Subscription Type:'),
+                      Text(
+                        'Subscription Type:',
+                        style: theme.textTheme.bodyLarge,
+                      ),
                       const SizedBox(width: 10),
                       DropdownButton<bool>(
+                        dropdownColor: theme.cardColor,
                         value: isMonthly,
                         onChanged: (value) {
                           if (value != null) {
@@ -236,14 +247,20 @@ class AboController with ChangeNotifier {
                             });
                           }
                         },
-                        items: const [
+                        items: [
                           DropdownMenuItem(
                             value: true,
-                            child: Text('Monthly'),
+                            child: Text(
+                              'Monthly',
+                              style: theme.textTheme.bodyLarge,
+                            ),
                           ),
                           DropdownMenuItem(
                             value: false,
-                            child: Text('Yearly'),
+                            child: Text(
+                              'Yearly',
+                              style: theme.textTheme.bodyLarge,
+                            ),
                           ),
                         ],
                       ),
@@ -267,8 +284,13 @@ class AboController with ChangeNotifier {
                             });
                           }
                         },
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.primaryColor,
+                        ),
                         child: Text(
-                            'Start Date: ${startDate.toLocal()}'.split(' ')[0]),
+                          'Start Date: ${startDate.toLocal().toString().split(' ')[0]}',
+                          style: theme.textTheme.labelSmall,
+                        ),
                       ),
                       TextButton(
                         onPressed: () async {
@@ -284,8 +306,13 @@ class AboController with ChangeNotifier {
                             });
                           }
                         },
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.primaryColor,
+                        ),
                         child: Text(
-                            'End Date: ${endDate.toLocal()}'.split(' ')[0]),
+                          'End Date: ${endDate.toLocal().toString().split(' ')[0]}',
+                          style: theme.textTheme.labelSmall,
+                        ),
                       ),
                     ],
                   ),
@@ -296,7 +323,13 @@ class AboController with ChangeNotifier {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancel'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: theme.colorScheme.secondary,
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: theme.textTheme.labelSmall,
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -305,31 +338,51 @@ class AboController with ChangeNotifier {
 
                     if (name.isEmpty || priceText.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please enter all fields'),
+                        SnackBar(
+                          content: Text(
+                            'Please enter all fields',
+                            style: theme.textTheme.bodyMedium,
+                          ),
                         ),
                       );
                     } else {
                       final price = double.tryParse(priceText);
                       if (price == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Invalid price value'),
+                          SnackBar(
+                            content: Text(
+                              'Invalid price value',
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           ),
                         );
                       } else {
                         editAbo(
                             abo.id, name, price, isMonthly, startDate, endDate);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Subscription updated successfully'),
+                          SnackBar(
+                            content: Text(
+                              'Subscription updated successfully',
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           ),
                         );
                         Navigator.of(context).pop();
                       }
                     }
                   },
-                  child: const Text('Save'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text(
+                    'Save',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
                 ),
               ],
             );
@@ -356,6 +409,7 @@ class AboController with ChangeNotifier {
     bool isMonthly = true;
     DateTime startDate = DateTime.now();
     DateTime endDate = DateTime.now().add(const Duration(days: 30));
+    final theme = Theme.of(context); // Get current theme
 
     showDialog(
       context: context,
@@ -363,31 +417,41 @@ class AboController with ChangeNotifier {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Add New Subscription'),
+              title: Text(
+                'Add New Subscription',
+                style: theme.textTheme.headlineSmall,
+              ),
+              backgroundColor: theme.dialogBackgroundColor,
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: nameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Name',
+                      labelStyle: theme.textTheme.bodyMedium,
                     ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: priceController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Price',
+                      labelStyle: theme.textTheme.bodyMedium,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text('Subscription Type:'),
+                      Text(
+                        'Subscription Type:',
+                        style: theme.textTheme.bodyLarge,
+                      ),
                       const SizedBox(width: 10),
                       DropdownButton<bool>(
+                        dropdownColor: theme.cardColor,
                         value: isMonthly,
                         onChanged: (value) {
                           if (value != null) {
@@ -396,14 +460,20 @@ class AboController with ChangeNotifier {
                             });
                           }
                         },
-                        items: const [
+                        items: [
                           DropdownMenuItem(
                             value: true,
-                            child: Text('Monthly'),
+                            child: Text(
+                              'Monthly',
+                              style: theme.textTheme.bodyLarge,
+                            ),
                           ),
                           DropdownMenuItem(
                             value: false,
-                            child: Text('Yearly'),
+                            child: Text(
+                              'Yearly',
+                              style: theme.textTheme.bodyLarge,
+                            ),
                           ),
                         ],
                       ),
@@ -427,8 +497,13 @@ class AboController with ChangeNotifier {
                             });
                           }
                         },
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.primaryColor,
+                        ),
                         child: Text(
-                            'Start Date: ${startDate.toLocal().toString().split(' ')[0]}'),
+                          'Start Date: ${startDate.toLocal().toString().split(' ')[0]}',
+                          style: theme.textTheme.bodyLarge,
+                        ),
                       ),
                       TextButton(
                         onPressed: () async {
@@ -444,8 +519,13 @@ class AboController with ChangeNotifier {
                             });
                           }
                         },
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.primaryColor,
+                        ),
                         child: Text(
-                            'End Date: ${endDate.toLocal().toString().split(' ')[0]}'),
+                          'End Date: ${endDate.toLocal().toString().split(' ')[0]}',
+                          style: theme.textTheme.labelSmall,
+                        ),
                       ),
                     ],
                   ),
@@ -456,7 +536,13 @@ class AboController with ChangeNotifier {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancel'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: theme.colorScheme.secondary,
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: theme.textTheme.labelSmall,
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -465,11 +551,13 @@ class AboController with ChangeNotifier {
 
                     if (name.isEmpty || priceText.isEmpty) {
                       Navigator.of(context).pop();
-                      // Using navigatorKey context to ensure that it is attached to the Scaffold.
                       ScaffoldMessenger.of(navigatorKey.currentContext!)
                           .showSnackBar(
-                        const SnackBar(
-                          content: Text('Please enter all fields'),
+                        SnackBar(
+                          content: Text(
+                            'Please enter all fields',
+                            style: theme.textTheme.bodyMedium,
+                          ),
                         ),
                       );
                     } else {
@@ -478,8 +566,11 @@ class AboController with ChangeNotifier {
                         Navigator.of(context).pop();
                         ScaffoldMessenger.of(navigatorKey.currentContext!)
                             .showSnackBar(
-                          const SnackBar(
-                            content: Text('Invalid price value'),
+                          SnackBar(
+                            content: Text(
+                              'Invalid price value',
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           ),
                         );
                       } else {
@@ -487,14 +578,28 @@ class AboController with ChangeNotifier {
                         Navigator.of(context).pop();
                         ScaffoldMessenger.of(navigatorKey.currentContext!)
                             .showSnackBar(
-                          const SnackBar(
-                            content: Text('Subscription added successfully'),
+                          SnackBar(
+                            content: Text(
+                              'Subscription added successfully',
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           ),
                         );
                       }
                     }
                   },
-                  child: const Text('Add'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text(
+                    'Add',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
                 ),
               ],
             );

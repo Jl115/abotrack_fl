@@ -1,4 +1,5 @@
 import 'package:abotrack_fl/src/app_routes.dart';
+import 'package:abotrack_fl/src/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -32,11 +33,8 @@ class MyApp extends StatelessWidget {
   /// The onGenerateTitle callback is used to generate the title for the app. The
   /// title is determined by the locale of the app.
   Widget build(BuildContext context) {
-    final settingsController = Provider.of<SettingsController>(context);
-
-    return ListenableBuilder(
-      listenable: settingsController,
-      builder: (BuildContext context, Widget? child) {
+    return Consumer<SettingsController>(
+      builder: (context, settingsController, child) {
         // Determine the initial route based on whether a password exists
         final initialRoute = settingsController.password == null
             ? AppRoutes.login
@@ -54,13 +52,14 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [
-            Locale('en', ''),
+            Locale('en', ''), // You can add more locales here if needed
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
+          theme: lightTheme, // Use your customized lightTheme here
+          darkTheme: darkTheme, // Use your customized darkTheme here
+          themeMode: settingsController
+              .themeMode, // Control the theme based on user preference
           onGenerateRoute: (RouteSettings routeSettings) {
             return AppRoutes.generateRoute(routeSettings, settingsController);
           },

@@ -21,12 +21,13 @@ class LoginView extends StatelessWidget {
     final TextEditingController passwordController = TextEditingController();
     final settingsController =
         Provider.of<SettingsController>(context, listen: false);
+    final theme = Theme.of(context); // Get the current theme
 
     final isPasswordSet = settingsController.password != null;
 
     return Scaffold(
       body: Container(
-        color: const Color.fromARGB(255, 150, 142, 142),
+        color: theme.scaffoldBackgroundColor, // Use theme background color
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
@@ -40,11 +41,10 @@ class LoginView extends StatelessWidget {
                     isPasswordSet
                         ? 'Enter Your Password'
                         : 'Create a New Password',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontFamily: 'Inter',
-                    ),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ), // Use theme text style and customize
                   ),
                   const SizedBox(height: 20),
                   PasswordInput(controller: passwordController),
@@ -91,7 +91,8 @@ class LoginView extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF495A4E),
+                      backgroundColor:
+                          theme.primaryColor, // Use theme button color
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -99,10 +100,11 @@ class LoginView extends StatelessWidget {
                     ),
                     child: Text(
                       isPasswordSet ? 'Enter' : 'Create Password',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontFamily: 'Inter',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: theme.colorScheme
+                            .onPrimary, // Text color should contrast button color
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),

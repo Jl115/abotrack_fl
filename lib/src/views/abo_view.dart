@@ -26,11 +26,14 @@ class AboView extends StatelessWidget {
   /// the AppBar is set to have a transparent background and no shadow.
   Widget build(BuildContext context) {
     final aboController = Provider.of<AboController>(context);
+    final theme = Theme.of(context); // Get the current theme
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 150, 142, 142),
+      backgroundColor:
+          theme.scaffoldBackgroundColor, // Use theme background color
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor:
+            theme.appBarTheme.backgroundColor, // Use theme AppBar color
         shadowColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 50,
@@ -39,7 +42,7 @@ class AboView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 30),
             child: PopupMenuButton<String>(
-              icon: const Icon(Icons.filter_list, color: Colors.black),
+              icon: Icon(Icons.filter_list, color: theme.iconTheme.color),
               onSelected: (value) {
                 if (value == 'Oldest') {
                   aboController.filterByOldest();
@@ -54,7 +57,7 @@ class AboView extends StatelessWidget {
                     .map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
-                    child: Text(choice),
+                    child: Text(choice, style: theme.textTheme.bodyMedium),
                   );
                 }).toList();
               },
@@ -74,7 +77,7 @@ class AboView extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(16),
-                color: const Color.fromARGB(255, 218, 218, 218),
+                color: theme.cardColor, // Use theme card color
               ),
               child: Container(
                 height: 780,
@@ -82,7 +85,7 @@ class AboView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  color: const Color.fromARGB(255, 218, 218, 218),
+                  color: theme.cardColor,
                 ),
                 child: Padding(
                   padding:
@@ -91,13 +94,10 @@ class AboView extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 10, bottom: 10),
                     shrinkWrap: true,
                     itemCount: aboController.abos.length,
-                    // Inside ListView.builder of AboView
                     itemBuilder: (context, index) {
                       final abo = aboController.abos[index];
                       return Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 16,
-                        ),
+                        padding: const EdgeInsets.only(bottom: 16),
                         child: Slidable(
                           key: ValueKey(abo.id),
                           startActionPane: ActionPane(
@@ -108,8 +108,8 @@ class AboView extends StatelessWidget {
                                 onPressed: (context) {
                                   aboController.showEditAboDialog(context, abo);
                                 },
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
+                                backgroundColor: theme.primaryColor,
+                                foregroundColor: theme.colorScheme.onPrimary,
                                 borderRadius: BorderRadius.circular(16),
                                 icon: Icons.edit,
                               ),
@@ -123,8 +123,8 @@ class AboView extends StatelessWidget {
                                 onPressed: (context) {
                                   aboController.deleteAbo(abo.id);
                                 },
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
+                                backgroundColor: theme.hintColor,
+                                foregroundColor: theme.colorScheme.onError,
                                 borderRadius: BorderRadius.circular(16),
                                 icon: Icons.delete,
                               ),
@@ -134,7 +134,7 @@ class AboView extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 100, 100, 100),
+                              color: theme.primaryColorDark,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -145,25 +145,35 @@ class AboView extends StatelessWidget {
                                   children: [
                                     Text(
                                       abo.name,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 16),
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.colorScheme.onPrimary,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       abo.isMonthly ? 'Monthly' : 'Yearly',
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 16),
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.hintColor,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       'Start Date: ${abo.startDate.toLocal().toString().split(' ')[0]}',
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 12),
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.colorScheme.onPrimary,
+                                      ),
                                     ),
                                     Text(
                                       'End Date: ${abo.endDate.toLocal().toString().split(' ')[0]}',
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 12),
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.colorScheme.onPrimary,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -172,8 +182,11 @@ class AboView extends StatelessWidget {
                                   children: [
                                     Text(
                                       '\$${abo.price.toStringAsFixed(2)}',
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 16),
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.colorScheme.onPrimary,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -194,27 +207,31 @@ class AboView extends StatelessWidget {
             bottom: 50,
             child: Center(
               child: Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 58,
-                  width: 250,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    color: const Color.fromARGB(232, 222, 248, 248),
+                padding: const EdgeInsets.all(8),
+                height: 58,
+                width: 250,
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Center(
-                    child: Text(
-                      'Monthly cost: ${aboController.getMonthlyCost().toStringAsFixed(2)}\$',
+                  color: theme.cardColor,
+                ),
+                child: Center(
+                  child: Text(
+                    'Monthly cost: ${aboController.getMonthlyCost().toStringAsFixed(2)}\$',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onPrimary,
                     ),
-                  )),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 218, 218, 218),
-        child: const Icon(Icons.add, color: Colors.black),
+        backgroundColor: theme.floatingActionButtonTheme.backgroundColor,
+        child: Icon(Icons.add, color: theme.colorScheme.onSecondary),
         onPressed: () {
           aboController.showAddAboDialog(context);
         },

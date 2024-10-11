@@ -52,8 +52,9 @@ class _ChartComponentState extends State<ChartComponent> {
                     return Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(month,
-                          style: const TextStyle(
-                              fontSize: 12)), // Increased font size
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium), // Use theme text style
                     );
                   },
                 ),
@@ -67,11 +68,13 @@ class _ChartComponentState extends State<ChartComponent> {
                     .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
                     .toList(),
                 isCurved: true,
-                barWidth: 5, // Slightly thicker line for better visibility
-                dotData: const FlDotData(
-                    show: true), // Show dots to make data points clearer
+                barWidth: 5,
+                dotData: FlDotData(show: true),
                 belowBarData: BarAreaData(
-                    show: true, color: Colors.lightBlue.withOpacity(0.3)),
+                    show: true,
+                    color: Theme.of(context)
+                        .primaryColor
+                        .withOpacity(0.3)), // Use primary color with opacity
               ),
             ],
           ),
@@ -103,7 +106,7 @@ class _ChartComponentState extends State<ChartComponent> {
 
     return Center(
       child: SizedBox(
-        height: 350, // Increased height for better readability
+        height: 350,
         child: BarChart(
           BarChartData(
             barGroups: monthlyPayments
@@ -115,9 +118,9 @@ class _ChartComponentState extends State<ChartComponent> {
                         BarChartRodData(
                           toY: entry.value,
                           color: entry.key == currentMonth
-                              ? Colors.red
-                              : Colors.blue, // Highlight current month in red
-                          width: 16, // Increase bar width for better visibility
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).primaryColor,
+                          width: 16,
                         ),
                       ],
                     ))
@@ -131,11 +134,8 @@ class _ChartComponentState extends State<ChartComponent> {
                         .format(DateTime(2024, value.toInt() + 1));
                     return Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-                        child:
-                            Text(month, style: const TextStyle(fontSize: 12)),
-                      ), // Increased font size
+                      child: Text(month,
+                          style: Theme.of(context).textTheme.bodyMedium),
                     );
                   },
                 ),
@@ -146,12 +146,12 @@ class _ChartComponentState extends State<ChartComponent> {
                   reservedSize: 40,
                   getTitlesWidget: (value, meta) {
                     return Text(value.toStringAsFixed(0),
-                        style: const TextStyle(fontSize: 12));
+                        style: Theme.of(context).textTheme.bodyMedium);
                   },
                 ),
               ),
             ),
-            gridData: const FlGridData(show: true),
+            gridData: FlGridData(show: true),
           ),
         ),
       ),
@@ -177,7 +177,7 @@ class _ChartComponentState extends State<ChartComponent> {
   Widget _buildPieChart(List<Abo> abos) {
     return Center(
       child: SizedBox(
-        height: 350, // Increased height for better readability
+        height: 350,
         child: PieChart(
           PieChartData(
             sections: abos
@@ -188,16 +188,15 @@ class _ChartComponentState extends State<ChartComponent> {
                       value: entry.value.price,
                       title:
                           '${entry.value.name}\n${entry.value.price.toStringAsFixed(2)}',
-                      radius: 60, // Increased radius for better visibility
-                      titleStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      radius: 60,
+                      titleStyle:
+                          Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                     ))
                 .toList(),
-            sectionsSpace:
-                2, // Spacing between sections for better differentiation
+            sectionsSpace: 2,
           ),
         ),
       ),
@@ -252,12 +251,13 @@ class _ChartComponentState extends State<ChartComponent> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
-        height: 400, // Increased container height for better readability
+        height: 400,
         decoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          color: const Color.fromARGB(255, 218, 218, 218),
+          color: Theme.of(context)
+              .cardColor, // Use theme card color for background
         ),
         child: Stack(
           children: [
@@ -276,7 +276,8 @@ class _ChartComponentState extends State<ChartComponent> {
               top: 8,
               right: 8,
               child: IconButton(
-                icon: const Icon(Icons.swap_horiz, color: Colors.black),
+                icon: Icon(Icons.swap_horiz,
+                    color: Theme.of(context).iconTheme.color),
                 onPressed: _changeGraph,
                 tooltip: 'Change Graph',
               ),

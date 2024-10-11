@@ -14,12 +14,6 @@ class AboListComponent extends StatelessWidget {
   /// ListView with a Slidable widget for each abo. The user can swipe the
   /// Slidable widget to the left to edit the abo, and swipe it to the right to
   /// delete the abo.
-  ///
-  /// The method also adds a Drawer to the Scaffold, which is used to navigate
-  /// between the different views of the app.
-  ///
-  /// The background color of the Scaffold is set to a light gray color, and
-  /// the AppBar is set to have a transparent background and no shadow.
   Widget build(BuildContext context) {
     final aboController = Provider.of<AboController>(context);
 
@@ -31,7 +25,7 @@ class AboListComponent extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          color: const Color.fromARGB(255, 218, 218, 218),
+          color: Theme.of(context).cardColor, // Use theme color for background
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -39,13 +33,10 @@ class AboListComponent extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             shrinkWrap: true,
             itemCount: aboController.abos.length,
-            // Inside ListView.builder of AboView
             itemBuilder: (context, index) {
               final abo = aboController.abos[index];
               return Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 16,
-                ),
+                padding: const EdgeInsets.only(bottom: 16),
                 child: Slidable(
                   key: ValueKey(abo.id),
                   startActionPane: ActionPane(
@@ -56,7 +47,8 @@ class AboListComponent extends StatelessWidget {
                         onPressed: (context) {
                           aboController.showEditAboDialog(context, abo);
                         },
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Theme.of(context)
+                            .primaryColor, // Theme color for edit action
                         foregroundColor: Colors.white,
                         borderRadius: BorderRadius.circular(16),
                         icon: Icons.edit,
@@ -71,7 +63,8 @@ class AboListComponent extends StatelessWidget {
                         onPressed: (context) {
                           aboController.deleteAbo(abo.id);
                         },
-                        backgroundColor: Colors.red,
+                        backgroundColor: Theme.of(context)
+                            .splashColor, // Theme error color for delete action
                         foregroundColor: Colors.white,
                         borderRadius: BorderRadius.circular(16),
                         icon: Icons.delete,
@@ -82,7 +75,8 @@ class AboListComponent extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 100, 100, 100),
+                      color: Theme.of(context)
+                          .primaryColorDark, // Use darker primary color for list item background
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -93,25 +87,45 @@ class AboListComponent extends StatelessWidget {
                           children: [
                             Text(
                               abo.name,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 16),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
                             ),
                             const SizedBox(height: 5),
                             Text(
                               abo.isMonthly ? 'Monthly' : 'Yearly',
-                              style: const TextStyle(
-                                  color: Colors.grey, fontSize: 16),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                  ),
                             ),
                             const SizedBox(height: 5),
                             Text(
                               'Start Date: ${abo.startDate.toLocal().toString().split(' ')[0]}',
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 12),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
                             ),
                             Text(
                               'End Date: ${abo.endDate.toLocal().toString().split(' ')[0]}',
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 12),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
                             ),
                           ],
                         ),
@@ -120,8 +134,13 @@ class AboListComponent extends StatelessWidget {
                           children: [
                             Text(
                               '\$${abo.price.toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 16),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
                             ),
                           ],
                         ),

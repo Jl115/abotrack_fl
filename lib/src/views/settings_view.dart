@@ -18,11 +18,15 @@ class SettingsView extends StatelessWidget {
   /// for changing the password.
   Widget build(BuildContext context) {
     final settingsController = Provider.of<SettingsController>(context);
+    final theme = Theme.of(context); // Get the current theme
+
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 150, 142, 142),
+      backgroundColor:
+          theme.scaffoldBackgroundColor, // Use theme background color
       appBar: AppBar(
         title: const Text('Settings'),
-        backgroundColor: const Color.fromARGB(255, 150, 142, 142),
+        backgroundColor:
+            theme.appBarTheme.backgroundColor, // Use theme AppBar color
       ),
       drawer: drawer.customDrawer(context),
       body: Padding(
@@ -31,7 +35,7 @@ class SettingsView extends StatelessWidget {
           width: 435,
           height: 896,
           decoration: ShapeDecoration(
-            color: const Color(0xFFD9D9D9),
+            color: theme.cardColor, // Use theme card color
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28),
             ),
@@ -46,38 +50,47 @@ class SettingsView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       height: 50,
                       width: 60,
                       child: Center(
                         child: Text(
                           'Theme',
-                          style: TextStyle(
-                            color: Colors.black,
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontSize: 16,
-                            fontFamily: 'Inter',
                             fontWeight: FontWeight.w600,
-                          ),
+                          ), // Use theme text style and customize as needed
                         ),
                       ),
                     ),
                     const SizedBox(width: 50),
                     DropdownButton<ThemeMode>(
-                      dropdownColor: const Color.fromARGB(255, 103, 79, 79),
+                      dropdownColor:
+                          theme.cardColor, // Adapt dropdown background to theme
                       value: settingsController.themeMode,
                       onChanged: settingsController.updateThemeMode,
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: ThemeMode.system,
-                          child: Text('System Theme'),
+                          child: Text(
+                            'System Theme',
+                            style: theme
+                                .textTheme.bodyMedium, // Use theme text style
+                          ),
                         ),
                         DropdownMenuItem(
                           value: ThemeMode.light,
-                          child: Text('Light Theme'),
+                          child: Text(
+                            'Light Theme',
+                            style: theme.textTheme.bodyMedium,
+                          ),
                         ),
                         DropdownMenuItem(
                           value: ThemeMode.dark,
-                          child: Text('Dark Theme'),
+                          child: Text(
+                            'Dark Theme',
+                            style: theme.textTheme.bodyMedium,
+                          ),
                         )
                       ],
                     ),
@@ -88,18 +101,19 @@ class SettingsView extends StatelessWidget {
                   onPressed: () =>
                       _showChangePasswordDialog(context, settingsController),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF495A4E),
+                    backgroundColor:
+                        theme.primaryColor, // Use theme's primary color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                     minimumSize: const Size(200, 50),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Change Password',
-                    style: TextStyle(
-                      color: Colors.white,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme
+                          .onPrimary, // Text color should contrast with button color
                       fontSize: 16,
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -115,12 +129,6 @@ class SettingsView extends StatelessWidget {
   /// Shows a dialog for changing the password.
   ///
   /// This dialog allows the user to input a new password and confirm it.
-  /// If the user presses the "Cancel" button, the dialog is simply closed.
-  /// If the user presses the "Save" button, the user is prompted to enter
-  /// both the new password and the confirmation password. If the passwords
-  /// do not match, the user is shown a snackbar error message.
-  /// If the passwords do match, the password is updated and the user is shown
-  /// a snackbar success message. The dialog is then closed.
   void _showChangePasswordDialog(
       BuildContext context, SettingsController settingsController) {
     final TextEditingController newPasswordController = TextEditingController();
@@ -130,7 +138,10 @@ class SettingsView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final theme = Theme.of(context); // Get the current theme
         return AlertDialog(
+          backgroundColor:
+              theme.cardColor, // Use the card color for dialog background
           title: const Text('Change Password'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -138,16 +149,19 @@ class SettingsView extends StatelessWidget {
               TextField(
                 controller: newPasswordController,
                 obscureText: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'New Password',
+                  labelStyle:
+                      theme.textTheme.bodyMedium, // Use theme text style
                 ),
               ),
               const SizedBox(height: 10),
               TextField(
                 controller: confirmPasswordController,
                 obscureText: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Confirm Password',
+                  labelStyle: theme.textTheme.bodyMedium,
                 ),
               ),
             ],

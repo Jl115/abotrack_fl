@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,11 +9,9 @@ import 'package:abotrack_fl/src/controller/settings_controller.dart';
 import 'package:abotrack_fl/src/service/settings_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart' as wm;
-import 'package:uuid/uuid.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:background_fetch/background_fetch.dart';
-import 'package:path_provider/path_provider.dart';
 import 'src/app.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
