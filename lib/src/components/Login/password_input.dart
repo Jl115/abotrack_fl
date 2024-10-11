@@ -6,6 +6,10 @@ class PasswordInput extends StatelessWidget {
   const PasswordInput({super.key, required this.controller});
 
   @override
+
+  /// Builds a widget for inputting a password.
+  ///
+  /// The widget is a TextFormField with a specific style and decoration.
   Widget build(BuildContext context) {
     return Container(
       width: 254,

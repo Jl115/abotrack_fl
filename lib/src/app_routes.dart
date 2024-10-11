@@ -11,6 +11,19 @@ class AppRoutes {
   static const String settings = '/settings';
   static const String abo = '/abo';
 
+  /// Generates a route based on the given [RouteSettings] and [SettingsController].
+  ///
+  /// If the user has not set a password, the login page is returned for all routes
+  /// except the login page.
+  ///
+  /// The following routes are supported:
+  ///
+  /// * [login]: The login page
+  /// * [dashboard]: The dashboard page
+  /// * [abo]: The ABO page
+  /// * [settings]: The settings page
+  ///
+  /// For all other routes, the login page is returned.
   static Route<dynamic> generateRoute(
       RouteSettings routeSettings, SettingsController settingsController) {
     // If the user has not set a password, default to the login page

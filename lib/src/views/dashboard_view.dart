@@ -15,6 +15,19 @@ class DashboardView extends StatelessWidget {
   final DrawerComponent drawer = DrawerComponent();
 
   @override
+
+  /// Build method for the DashboardView widget.
+  ///
+  /// This method creates the layout for the dashboard view. It contains a
+  /// ChartComponent and an AboListComponent, which are both displayed in a
+  /// ListView. The ChartComponent is used to display the monthly cost of the
+  /// abos, while the AboListComponent is used to display the list of abos.
+  ///
+  /// The method also adds a FloatingActionButton to the bottom right corner
+  /// of the screen. When pressed, this button opens a dialog to add a new abo.
+  ///
+  /// The background color of the Scaffold is set to a light gray color, and
+  /// the AppBar is set to have a transparent background and no shadow.
   Widget build(BuildContext context) {
     final aboController = Provider.of<AboController>(context);
 

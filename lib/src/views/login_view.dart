@@ -8,6 +8,15 @@ class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
+
+  /// Builds the login view.
+  ///
+  /// The login view contains a text field for the user to enter their password.
+  /// If the password is not set, the user is prompted to create a new password.
+  /// If the password is set, the user is prompted to enter the existing password.
+  /// If the user presses the "Enter" button, the user is navigated to the
+  /// dashboard if the password is correct, or an error message is shown if the
+  /// password is incorrect or empty.
   Widget build(BuildContext context) {
     final TextEditingController passwordController = TextEditingController();
     final settingsController =

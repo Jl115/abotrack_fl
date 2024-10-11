@@ -11,6 +11,11 @@ class SettingsView extends StatelessWidget {
   final DrawerComponent drawer = DrawerComponent();
 
   @override
+
+  /// Builds the settings view.
+  ///
+  /// The settings view contains a dropdown for the theme and an elevated button
+  /// for changing the password.
   Widget build(BuildContext context) {
     final settingsController = Provider.of<SettingsController>(context);
     return Scaffold(
@@ -107,6 +112,15 @@ class SettingsView extends StatelessWidget {
     );
   }
 
+  /// Shows a dialog for changing the password.
+  ///
+  /// This dialog allows the user to input a new password and confirm it.
+  /// If the user presses the "Cancel" button, the dialog is simply closed.
+  /// If the user presses the "Save" button, the user is prompted to enter
+  /// both the new password and the confirmation password. If the passwords
+  /// do not match, the user is shown a snackbar error message.
+  /// If the passwords do match, the password is updated and the user is shown
+  /// a snackbar success message. The dialog is then closed.
   void _showChangePasswordDialog(
       BuildContext context, SettingsController settingsController) {
     final TextEditingController newPasswordController = TextEditingController();

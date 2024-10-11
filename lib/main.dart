@@ -22,6 +22,11 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 // Define the navigatorKey
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+/// Callback to be executed when a Workmanager task is scheduled.
+///
+/// Tasks are used to run code in the background. This callback is
+/// responsible for scheduling a local notification when a task is
+/// triggered (e.g. when a subscription is expiring soon).
 void callbackDispatcher() {
   wm.Workmanager().executeTask((task, inputData) async {
     _showNotification(
@@ -30,6 +35,14 @@ void callbackDispatcher() {
   });
 }
 
+/// Shows a local notification with the given title and body.
+///
+/// This function is used in the Workmanager callback to notify the user
+/// when a subscription is expiring soon.
+///
+/// [title] is the title of the notification.
+///
+/// [body] is the body of the notification.
 Future<void> _showNotification(String title, String body) async {
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'abonnement_expiring_check',
@@ -53,12 +66,32 @@ Future<void> _showNotification(String title, String body) async {
   );
 }
 
+/// Called when a background fetch event is triggered.
+///
+/// This function is called by the BackgroundFetch plugin when a background
+/// fetch event is triggered. It shows a local notification to indicate that
+/// the event was triggered and then calls [BackgroundFetch.finish] to
+/// complete the event.
 void backgroundFetchHeadlessTask(String taskId) async {
   print("[BackgroundFetch] Headless event received.");
   _showNotification("Background Fetch", "Background fetch event triggered!");
   BackgroundFetch.finish(taskId);
 }
 
+/// The main entry point of the application.
+///
+/// This function is the main entry point of the application. It initializes the
+/// application, loads the settings and the abonnement data, initializes the
+/// local notification plugin, and then runs the application.
+///
+/// On Android, it also registers a periodic task using the WorkManager plugin
+/// to check for expiring abonnements every 15 minutes.
+///
+/// On iOS, it configures the background fetch plugin to fetch the abonnement
+/// data every 15 minutes, and registers a headless background task to handle
+/// the background fetch event.
+///
+/// Finally, it runs the application using the [MaterialApp] widget.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
@@ -180,6 +213,13 @@ void main() async {
   );
 }
 
+/// Calculates the duration until the next scheduled notification.
+///
+/// The next scheduled notification will occur at the next 12:00 PM.
+/// If the current time is after 12:00 PM, the next scheduled notification
+/// will occur at 12:00 PM the next day.
+///
+/// Returns the duration until the next scheduled notification.
 Duration _calculateInitialDelay() {
   DateTime now = DateTime.now();
   DateTime targetTime = DateTime(now.year, now.month, now.day, 12);

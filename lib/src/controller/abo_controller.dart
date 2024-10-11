@@ -23,6 +23,18 @@ class Abo {
     required this.name,
   });
 
+  /// Converts this [Abo] object to a JSON-serializable map.
+  ///
+  /// The map contains the following keys:
+  ///
+  /// - 'id': The unique identifier of the Abo object.
+  /// - 'startDate': The start date of the Abo in ISO8601 format.
+  /// - 'endDate': The end date of the Abo in ISO8601 format.
+  /// - 'price': The monthly cost of the Abo.
+  /// - 'isMonthly': A boolean indicating whether the Abo is a monthly or yearly subscription.
+  /// - 'name': The name of the Abo.
+  ///
+  /// The map can be serialized to JSON using [jsonEncode].
   Map<String, dynamic> toJson() => {
         'id': id,
         'startDate': startDate.toIso8601String(),
@@ -50,11 +62,20 @@ class AboController with ChangeNotifier {
 
   List<Abo> get abos => _filteredAbos.isNotEmpty ? _filteredAbos : _abos;
 
+  /// Returns a [File] object pointing to the file that contains the app's
+  /// abos. The file is named "abos.json" and is located in the app's
+  /// application document directory.
   Future<File> _getAboFile() async {
     final directory = await getApplicationDocumentsDirectory();
     return File('${directory.path}/abos.json');
   }
 
+  /// Loads the app's abos from the JSON file in the app's application document
+  /// directory. If the file does not exist, the method does nothing and prints
+  /// a message to the console. If the file exists, the method reads it and
+  /// converts its contents to a list of [Abo] objects, replacing the existing
+  /// list. The method also clears any previous filters and notifies the UI to
+  /// update.
   Future<void> loadAbos() async {
     try {
       final file = await _getAboFile();
@@ -73,6 +94,12 @@ class AboController with ChangeNotifier {
     }
   }
 
+  /// Calculates the total monthly cost of all abos in the app.
+  ///
+  /// This method iterates over the list of abos and adds the monthly cost of each
+  /// abo to a running total. If an abo is a yearly subscription, the method
+  /// estimates the monthly cost by dividing the price by 12. The final total is
+  /// returned as a double.
   double getMonthlyCost() {
     double total = 0.0;
     for (var abo in _abos) {
@@ -86,6 +113,12 @@ class AboController with ChangeNotifier {
     return total;
   }
 
+  /// Saves the list of abos to the app's application document directory.
+  ///
+  /// This method takes the list of [Abo] objects and converts it to a JSON-serializable
+  /// list. The list is then written to a file named "abos.json" in the app's
+  /// application document directory. If the file does not exist, it is created.
+  /// If there is an error writing to the file, the error is not propagated.
   Future<void> saveAbos() async {
     try {
       final file = await _getAboFile();
@@ -97,6 +130,13 @@ class AboController with ChangeNotifier {
     }
   }
 
+  /// Adds a new [Abo] to the list of abos.
+  ///
+  /// This method takes the name, price, isMonthly flag, start date, and end date of
+  /// the new abo, and creates a new [Abo] object with these values. The method
+  /// then adds the new abo to the list of abos and saves the list to the app's
+  /// application document directory. Finally, the method notifies the UI to
+  /// update.
   void addAbo(String name, double price, bool isMonthly, DateTime startDate,
       DateTime endDate) {
     var uuid = const Uuid();
@@ -113,6 +153,14 @@ class AboController with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Edits an existing [Abo] in the list of abos.
+  ///
+  /// This method takes the unique ID of the abo to edit, as well as the new
+  /// name, price, isMonthly flag, start date, and end date of the abo. The
+  /// method then finds the abo with the given ID and updates its fields with the
+  /// provided values. Finally, the method saves the list of abos to the app's
+  /// application document directory and notifies the UI to update. If the abo
+  /// with the given ID is not found, no changes are made.
   void editAbo(String id, String name, double price, bool isMonthly,
       DateTime startDate, DateTime endDate) {
     final aboIndex = _abos.indexWhere((abo) => abo.id == id);
@@ -128,6 +176,12 @@ class AboController with ChangeNotifier {
     }
   }
 
+  /// Deletes the [Abo] with the given [id] from the list of abos.
+  ///
+  /// This method removes the abo with the given ID from the list of abos,
+  /// saves the updated list to the app's application document directory,
+  /// and notifies the UI to update. If the abo with the given ID is not
+  /// found, no changes are made.
   void deleteAbo(String id) {
     _abos.removeWhere((abo) => abo.id == id);
     saveAbos();
@@ -285,6 +339,17 @@ class AboController with ChangeNotifier {
     );
   }
 
+  /// Shows a dialog for adding a new subscription.
+  ///
+  /// This dialog allows the user to input the name, price, isMonthly flag, start
+  /// date, and end date of the new subscription. If the user presses the "Cancel"
+  /// button, the dialog is simply closed.
+  ///
+  /// If the user presses the "Add" button, the user is prompted to enter all
+  /// required fields. If any field is empty, the user is shown a snackbar error
+  /// message. If the price is not a valid number, the user is also shown a
+  /// snackbar error message. If all fields are valid, the subscription is added
+  /// and the user is shown a snackbar success message. The dialog is then closed.
   void showAddAboDialog(BuildContext context) {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
@@ -439,18 +504,29 @@ class AboController with ChangeNotifier {
     );
   }
 
+  /// Sorts the list of abos by their start date in ascending order.
+  ///
+  /// This will cause the UI to display the abos in the order of their start date,
+  /// with the oldest first.
   void filterByOldest() {
     _filteredAbos = List.from(_abos)
       ..sort((a, b) => a.startDate.compareTo(b.startDate));
     notifyListeners();
   }
 
+  /// Sorts the list of abos by their start date in descending order.
+  ///
+  /// This will cause the UI to display the abos in the order of their start date,
+  /// with the newest first.
   void filterByNewest() {
     _filteredAbos = List.from(_abos)
       ..sort((a, b) => b.startDate.compareTo(a.startDate));
     notifyListeners();
   }
 
+  /// Clears the current filter and displays all abos in the list.
+  ///
+  /// This will cause the UI to display all abos in the list, without any filtering.
   void clearFilter() {
     _filteredAbos.clear();
     notifyListeners();

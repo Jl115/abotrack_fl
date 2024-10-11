@@ -10,6 +10,20 @@ class AboView extends StatelessWidget {
   final DrawerComponent drawer = DrawerComponent();
 
   @override
+
+  /// Build method for the AboView widget.
+  ///
+  /// This method creates the layout for the AboView widget. It contains a
+  /// ListView with a Slidable widget for each abo. The user can swipe the
+  /// Slidable widget to the left to edit the abo, and swipe it to the right to
+  /// delete the abo. The user can also add a new abo by pressing the
+  /// FloatingActionButton.
+  ///
+  /// The method also adds a Drawer to the Scaffold, which is used to navigate
+  /// between the different views of the app.
+  ///
+  /// The background color of the Scaffold is set to a light gray color, and
+  /// the AppBar is set to have a transparent background and no shadow.
   Widget build(BuildContext context) {
     final aboController = Provider.of<AboController>(context);
 

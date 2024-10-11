@@ -14,6 +14,17 @@ class Abo {
   });
 
   // Convert Abo object to JSON
+  /// Converts this [Abo] object to a JSON-serializable map.
+  ///
+  /// The map contains the following keys:
+  ///
+  /// - 'id': The unique identifier of the Abo object.
+  /// - 'startDate': The start date of the Abo in ISO8601 format.
+  /// - 'endDate': The end date of the Abo in ISO8601 format.
+  /// - 'price': The monthly cost of the Abo.
+  /// - 'isMonthly': A boolean indicating whether the Abo is a monthly or yearly subscription.
+  ///
+  /// The map can be serialized to JSON using [jsonEncode].
   Map<String, dynamic> toJson() => {
         'id': id,
         'startDate': startDate.toIso8601String(),

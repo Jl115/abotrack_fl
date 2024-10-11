@@ -12,6 +12,17 @@ class DrawerComponent {
     return _instance!;
   }
 
+  /// Creates a Drawer widget with a custom layout.
+  ///
+  /// The Drawer widget is used as the side menu for the app.
+  ///
+  /// The layout consists of a column with three TextButton widgets.
+  /// The first button navigates to the DashboardView, the second button
+  /// navigates to the AboView and the third button navigates to the SettingsView.
+  ///
+  /// The Drawer widget is also given a custom width and background color.
+  ///
+  /// The function returns a Drawer widget with the above layout and properties.
   Drawer customDrawer(BuildContext context) {
     return Drawer(
       backgroundColor: const Color.fromARGB(255, 150, 142, 142),

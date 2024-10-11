@@ -4,6 +4,14 @@ class PasswordSubmitButton extends StatelessWidget {
   const PasswordSubmitButton({super.key});
 
   @override
+
+  /// Builds a submit button with the text "Enter".
+  ///
+  /// The button is of the color #495A4E, with a rounded rectangle border
+  /// with a radius of 16, and a minimum size of 160x50. The text is white,
+  /// with a font size of 12, and the font family is Inter.
+  ///
+  /// The `onPressed` callback is not set, so it must be set manually.
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
