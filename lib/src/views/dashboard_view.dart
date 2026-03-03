@@ -2,6 +2,7 @@ import 'package:abotrack_fl/src/components/base/drawer_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/aboo_list_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/analytics_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/chart_component.dart';
+import 'package:abotrack_fl/src/components/dashboard/upcoming_renewals_component.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
 
 import 'package:flutter/material.dart';
@@ -172,6 +173,8 @@ class DashboardView extends StatelessWidget {
               ChartComponent(),
               SizedBox(height: 20),
               AnalyticsComponent(),
+              SizedBox(height: 20),
+              UpcomingRenewalsComponent(),
               SizedBox(height: 20),
               AboListComponent(),
             ],
