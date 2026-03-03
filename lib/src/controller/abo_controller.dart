@@ -306,7 +306,7 @@ class AboController with ChangeNotifier {
   /// application document directory. Finally, the method notifies the UI to
   /// update.
   void addAbo(String name, double price, bool isMonthly, DateTime startDate,
-      DateTime endDate) {
+      DateTime endDate, {String? category, String? notes}) {
     var uuid = const Uuid();
     final newAbo = Abo(
       id: uuid.v4(), // Generate a unique ID
@@ -315,6 +315,8 @@ class AboController with ChangeNotifier {
       price: price,
       isMonthly: isMonthly,
       name: name,
+      category: category,
+      notes: notes,
     );
     _abos.add(newAbo);
     saveAbos();
@@ -330,7 +332,7 @@ class AboController with ChangeNotifier {
   /// application document directory and notifies the UI to update. If the abo
   /// with the given ID is not found, no changes are made.
   void editAbo(String id, String name, double price, bool isMonthly,
-      DateTime startDate, DateTime endDate) {
+      DateTime startDate, DateTime endDate, {String? category, String? notes}) {
     final aboIndex = _abos.indexWhere((abo) => abo.id == id);
     if (aboIndex != -1) {
       _abos[aboIndex]
@@ -338,7 +340,9 @@ class AboController with ChangeNotifier {
         ..price = price
         ..isMonthly = isMonthly
         ..startDate = startDate
-        ..endDate = endDate;
+        ..endDate = endDate
+        ..category = category
+        ..notes = notes;
       saveAbos();
       notifyListeners();
     }
@@ -361,10 +365,14 @@ class AboController with ChangeNotifier {
         TextEditingController(text: abo.name);
     final TextEditingController priceController =
         TextEditingController(text: abo.price.toString());
+    final TextEditingController categoryController =
+        TextEditingController(text: abo.category ?? '');
+    final TextEditingController notesController =
+        TextEditingController(text: abo.notes ?? '');
     bool isMonthly = abo.isMonthly;
     DateTime startDate = abo.startDate;
     DateTime endDate = abo.endDate;
-    final theme = Theme.of(context); // Get current theme
+    final theme = Theme.of(context);
 
     showDialog(
       context: context,
@@ -377,114 +385,135 @@ class AboController with ChangeNotifier {
                 style: theme.textTheme.headlineSmall,
               ),
               backgroundColor: theme.dialogBackgroundColor,
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      labelStyle: theme.textTheme.bodyMedium,
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        labelStyle: theme.textTheme.bodyMedium,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: priceController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Price',
-                      labelStyle: theme.textTheme.bodyMedium,
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Price',
+                        labelStyle: theme.textTheme.bodyMedium,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Subscription Type:',
-                        style: theme.textTheme.bodyLarge,
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: categoryController,
+                      decoration: InputDecoration(
+                        labelText: 'Category (optional)',
+                        labelStyle: theme.textTheme.bodyMedium,
+                        hintText: 'e.g., Streaming, Software, Gym',
                       ),
-                      const SizedBox(width: 10),
-                      DropdownButton<bool>(
-                        dropdownColor: theme.cardColor,
-                        value: isMonthly,
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() {
-                              isMonthly = value;
-                            });
-                          }
-                        },
-                        items: [
-                          DropdownMenuItem(
-                            value: true,
-                            child: Text(
-                              'Monthly',
-                              style: theme.textTheme.bodyLarge,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Subscription Type:',
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                        const SizedBox(width: 10),
+                        DropdownButton<bool>(
+                          dropdownColor: theme.cardColor,
+                          value: isMonthly,
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                isMonthly = value;
+                              });
+                            }
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: true,
+                              child: Text(
+                                'Monthly',
+                                style: theme.textTheme.bodyLarge,
+                              ),
                             ),
-                          ),
-                          DropdownMenuItem(
-                            value: false,
-                            child: Text(
-                              'Yearly',
-                              style: theme.textTheme.bodyLarge,
+                            DropdownMenuItem(
+                              value: false,
+                              child: Text(
+                                'Yearly',
+                                style: theme.textTheme.bodyLarge,
+                              ),
                             ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: startDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) {
+                              setState(() {
+                                startDate = pickedDate;
+                              });
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.primaryColor,
                           ),
-                        ],
+                          child: Text(
+                            'Start Date: ${startDate.toLocal().toString().split(' ')[0]}',
+                            style: theme.textTheme.labelSmall,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: endDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) {
+                              setState(() {
+                                endDate = pickedDate;
+                              });
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.primaryColor,
+                          ),
+                          child: Text(
+                            'End Date: ${endDate.toLocal().toString().split(' ')[0]}',
+                            style: theme.textTheme.labelSmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: notesController,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        labelText: 'Notes (optional)',
+                        labelStyle: theme.textTheme.bodyMedium,
+                        hintText: 'Any additional notes',
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: startDate,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) {
-                            setState(() {
-                              startDate = pickedDate;
-                            });
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: theme.primaryColor,
-                        ),
-                        child: Text(
-                          'Start Date: ${startDate.toLocal().toString().split(' ')[0]}',
-                          style: theme.textTheme.labelSmall,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: endDate,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) {
-                            setState(() {
-                              endDate = pickedDate;
-                            });
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: theme.primaryColor,
-                        ),
-                        child: Text(
-                          'End Date: ${endDate.toLocal().toString().split(' ')[0]}',
-                          style: theme.textTheme.labelSmall,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
@@ -508,7 +537,7 @@ class AboController with ChangeNotifier {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'Please enter all fields',
+                            'Please enter all required fields',
                             style: theme.textTheme.bodyMedium,
                           ),
                         ),
@@ -526,7 +555,10 @@ class AboController with ChangeNotifier {
                         );
                       } else {
                         editAbo(
-                            abo.id, name, price, isMonthly, startDate, endDate);
+                            abo.id, name, price, isMonthly, startDate, endDate,
+                            category: categoryController.text.isEmpty ? null : categoryController.text,
+                            notes: notesController.text.isEmpty ? null : notesController.text,
+                        );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
@@ -574,10 +606,12 @@ class AboController with ChangeNotifier {
   void showAddAboDialog(BuildContext context) {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
+    final TextEditingController categoryController = TextEditingController();
+    final TextEditingController notesController = TextEditingController();
     bool isMonthly = true;
     DateTime startDate = DateTime.now();
     DateTime endDate = DateTime.now().add(const Duration(days: 30));
-    final theme = Theme.of(context); // Get current theme
+    final theme = Theme.of(context);
 
     showDialog(
       context: context,
@@ -590,114 +624,135 @@ class AboController with ChangeNotifier {
                 style: theme.textTheme.headlineSmall,
               ),
               backgroundColor: theme.dialogBackgroundColor,
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      labelStyle: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: priceController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Price',
-                      labelStyle: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Subscription Type:',
-                        style: theme.textTheme.bodyLarge,
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        labelStyle: theme.textTheme.bodyMedium,
                       ),
-                      const SizedBox(width: 10),
-                      DropdownButton<bool>(
-                        dropdownColor: theme.cardColor,
-                        value: isMonthly,
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() {
-                              isMonthly = value;
-                            });
-                          }
-                        },
-                        items: [
-                          DropdownMenuItem(
-                            value: true,
-                            child: Text(
-                              'Monthly',
-                              style: theme.textTheme.bodyLarge,
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: false,
-                            child: Text(
-                              'Yearly',
-                              style: theme.textTheme.bodyLarge,
-                            ),
-                          ),
-                        ],
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Price',
+                        labelStyle: theme.textTheme.bodyMedium,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: startDate,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) {
-                            setState(() {
-                              startDate = pickedDate;
-                            });
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: theme.primaryColor,
-                        ),
-                        child: Text(
-                          'Start Date: ${startDate.toLocal().toString().split(' ')[0]}',
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: categoryController,
+                      decoration: InputDecoration(
+                        labelText: 'Category (optional)',
+                        labelStyle: theme.textTheme.bodyMedium,
+                        hintText: 'e.g., Streaming, Software, Gym',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Subscription Type:',
                           style: theme.textTheme.bodyLarge,
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: endDate,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) {
-                            setState(() {
-                              endDate = pickedDate;
-                            });
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: theme.primaryColor,
+                        const SizedBox(width: 10),
+                        DropdownButton<bool>(
+                          dropdownColor: theme.cardColor,
+                          value: isMonthly,
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                isMonthly = value;
+                              });
+                            }
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: true,
+                              child: Text(
+                                'Monthly',
+                                style: theme.textTheme.bodyLarge,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: false,
+                              child: Text(
+                                'Yearly',
+                                style: theme.textTheme.bodyLarge,
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Text(
-                          'End Date: ${endDate.toLocal().toString().split(' ')[0]}',
-                          style: theme.textTheme.labelSmall,
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: startDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) {
+                              setState(() {
+                                startDate = pickedDate;
+                              });
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.primaryColor,
+                          ),
+                          child: Text(
+                            'Start Date: ${startDate.toLocal().toString().split(' ')[0]}',
+                            style: theme.textTheme.bodyLarge,
+                          ),
                         ),
+                        TextButton(
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: endDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) {
+                              setState(() {
+                                endDate = pickedDate;
+                              });
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.primaryColor,
+                          ),
+                          child: Text(
+                            'End Date: ${endDate.toLocal().toString().split(' ')[0]}',
+                            style: theme.textTheme.labelSmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: notesController,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        labelText: 'Notes (optional)',
+                        labelStyle: theme.textTheme.bodyMedium,
+                        hintText: 'Any additional notes',
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
@@ -723,7 +778,7 @@ class AboController with ChangeNotifier {
                           .showSnackBar(
                         SnackBar(
                           content: Text(
-                            'Please enter all fields',
+                            'Please enter all required fields',
                             style: theme.textTheme.bodyMedium,
                           ),
                         ),
@@ -742,7 +797,15 @@ class AboController with ChangeNotifier {
                           ),
                         );
                       } else {
-                        addAbo(name, price, isMonthly, startDate, endDate);
+                        addAbo(
+                          name,
+                          price,
+                          isMonthly,
+                          startDate,
+                          endDate,
+                          category: categoryController.text.isEmpty ? null : categoryController.text,
+                          notes: notesController.text.isEmpty ? null : notesController.text,
+                        );
                         Navigator.of(context).pop();
                         ScaffoldMessenger.of(navigatorKey.currentContext!)
                             .showSnackBar(
