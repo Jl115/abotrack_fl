@@ -2,6 +2,7 @@ import 'package:abotrack_fl/src/components/base/drawer_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/aboo_list_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/analytics_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/chart_component.dart';
+import 'package:abotrack_fl/src/components/dashboard/search_filter_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/upcoming_renewals_component.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
 
@@ -169,14 +170,16 @@ class DashboardView extends StatelessWidget {
             physics: Theme.of(context).platform == TargetPlatform.iOS
                 ? const ClampingScrollPhysics()
                 : const AlwaysScrollableScrollPhysics(),
-            children: const [
-              ChartComponent(),
-              SizedBox(height: 20),
-              AnalyticsComponent(),
-              SizedBox(height: 20),
-              UpcomingRenewalsComponent(),
-              SizedBox(height: 20),
-              AboListComponent(),
+            children: [
+              const ChartComponent(),
+              const SizedBox(height: 20),
+              const AnalyticsComponent(),
+              const SizedBox(height: 20),
+              const UpcomingRenewalsComponent(),
+              const SizedBox(height: 20),
+              const SearchFilterComponent(),
+              const SizedBox(height: 20),
+              const AboListComponent(),
             ],
           ),
           Positioned(
