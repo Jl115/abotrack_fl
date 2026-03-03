@@ -90,10 +90,8 @@ class _SecuritySettingsComponentState extends State<SecuritySettingsComponent> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Biometric Not Available'),
-        content: Text(
-          _biometricService.isBiometricAvailable().then((_) => 
-            'No biometric credentials enrolled. Please set up fingerprint or face recognition in your device settings.',
-          ),
+        content: const Text(
+          'No biometric credentials enrolled. Please set up fingerprint or face recognition in your device settings.',
         ),
         actions: [
           TextButton(

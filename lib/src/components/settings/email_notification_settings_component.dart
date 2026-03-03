@@ -86,10 +86,10 @@ class _EmailNotificationSettingsComponentState extends State<EmailNotificationSe
               children: [
                 TextFormField(
                   controller: _smtpController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'SMTP Server',
                     hintText: 'smtp.gmail.com',
-                    prefixIcon: Icon(Icons.server),
+                    prefixIcon: const Icon(Icons.email),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {

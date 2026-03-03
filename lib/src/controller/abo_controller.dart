@@ -8,6 +8,8 @@ import 'package:uuid/uuid.dart';
 
 import 'package:path_provider/path_provider.dart';
 
+export 'package:abotrack_fl/src/models/abo.dart';
+
 class AboController with ChangeNotifier {
   // Sorting state
   bool _sortAscending = true;
