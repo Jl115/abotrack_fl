@@ -53,8 +53,8 @@ class DashboardView extends StatelessWidget {
               aboController.toggleSortOrder();
             },
           ),
-          const IconButton(
-            icon: Icon(Icons.filter_list),
+          IconButton(
+            icon: const Icon(Icons.filter_list),
             tooltip: 'Filter subscriptions',
             onPressed: () {
               showDialog(

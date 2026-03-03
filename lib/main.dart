@@ -45,7 +45,6 @@ Future<void> _showNotification(String title, String body) async {
     'abonnement_expiring_check',
     'Abonnements Expiring Check',
     importance: Importance.max,
-    priority: Priority.high,
   );
 
   await flutterLocalNotificationsPlugin.show(
@@ -203,7 +202,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => settingsController),
         ChangeNotifierProvider.value(value: aboController),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         navigatorKey: navigatorKey,
         home: MyApp(),
       ),

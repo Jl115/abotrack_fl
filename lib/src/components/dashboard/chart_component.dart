@@ -173,7 +173,7 @@ class _ChartComponentState extends State<ChartComponent> {
               ),
             ),
             gridData: const FlGridData(show: true),
-            borderData: const FlBorderData(show: false),
+            borderData: FlBorderData(show: false),
             minY: 0,
             maxY: maxPayment > 0 ? maxPayment * 1.2 : 100,
           ),

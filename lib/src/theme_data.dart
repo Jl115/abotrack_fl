@@ -55,7 +55,7 @@ final ThemeData lightTheme = ThemeData(
       backgroundColor: const Color(
           0xFF5D5D5D), // Button background color, matching gray buttons in image
       foregroundColor: Colors.white, // Button text color for better contrast
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.symmetric(

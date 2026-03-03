@@ -35,7 +35,7 @@ class CloudBackupService {
         'subscriptions': abos.map((abo) => abo.toJson()).toList(),
       };
 
-      const jsonString = JsonEncoder.withIndent('  ').convert(backupData);
+      final jsonString = JsonEncoder.withIndent('  ').convert(backupData);
       
       // Save to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
