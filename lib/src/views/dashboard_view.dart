@@ -48,6 +48,40 @@ class DashboardView extends StatelessWidget {
               aboController.toggleSortOrder();
             },
           ),
+          IconButton(
+            icon: Icon(Icons.search),
+            tooltip: 'Filter subscriptions by name',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (ctx) {
+                  final TextEditingController filterController = TextEditingController();
+                  return AlertDialog(
+                    title: Text('Filter Subscriptions'),
+                    content: TextField(
+                      controller: filterController,
+                      decoration: InputDecoration(hintText: 'Enter name'),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop();
+                        },
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          aboController.filterAbosByName(filterController.text);
+                          Navigator.of(ctx).pop();
+                        },
+                        child: Text('Apply'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ],
       ),
       extendBodyBehindAppBar: true,

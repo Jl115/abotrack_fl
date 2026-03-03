@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io' show Platform;
+
 import 'package:abotrack_fl/main.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -87,22 +89,36 @@ class AboController with ChangeNotifier {
   /// abos. The file is named "abos.json" and is located in the app's
   /// application document directory.
   Future<File> _getAboFile() async {
-    // Filtering state
-  String _filterQuery = '';
-
-  /// Apply a name filter to the list of abos.
-  void filterAbosByName(String query) {
-    _filterQuery = query.toLowerCase();
-    if (_filterQuery.isEmpty) {
-      _filteredAbos = [];
-    } else {
-      _filteredAbos = _abos.where((abo) => abo.name.toLowerCase().contains(_filterQuery)).toList();
-    }
-    notifyListeners();
-  }
-
+    // Use a temporary directory for Linux/testing environments where the
+    // path_provider plugin may not be available.
+    final directory = Platform.isLinux ? Directory('/tmp') : await getApplicationDocumentsDirectory();
     return File('${directory.path}/abos.json');
   }
+
+  // Filtering state
+  String _filterQuery = '';
+
+  /// Export the list of subscriptions to a file in JSON or CSV format.
+  /// The file is saved in the app's documents directory.
+  /// Returns the file path of the exported file.
+  Future<String> exportAbos({required bool asJson}) async {
+    final directory = Platform.isLinux ? Directory('/tmp') : await getApplicationDocumentsDirectory();
+    final now = DateTime.now();
+    final fileName = asJson ? 'abos_export_${now.millisecondsSinceEpoch}.json' : 'abos_export_${now.millisecondsSinceEpoch}.csv';
+    final file = File('${directory.path}/$fileName');
+    if (asJson) {
+      final jsonList = _abos.map((abo) => abo.toJson()).toList();
+      await file.writeAsString(JsonEncoder.withIndent('  ').convert(jsonList));
+    } else {
+      // CSV header
+      final header = 'id,name,startDate,endDate,price,isMonthly';
+      final rows = _abos.map((a) => '${a.id},${a.name},${a.startDate.toIso8601String()},${a.endDate.toIso8601String()},${a.price},${a.isMonthly}').join('\n');
+      await file.writeAsString('$header\n$rows');
+    }
+    print('Exported subscriptions to ${file.path}');
+    return file.path;
+  }
+
 
   /// Loads the app's abos from the JSON file in the app's application document
   /// directory. If the file does not exist, the method does nothing and prints
