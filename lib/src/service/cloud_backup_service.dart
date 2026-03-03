@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Cloud backup service using local storage (simplified version).
@@ -51,14 +53,14 @@ class CloudBackupService {
   }
 
   /// Restore subscriptions from local backup.
-  Future<bool> restoreFromCloud(AboController controller) async {
+  Future<int> restoreFromCloud(AboController controller) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString(_backupFileName);
       
       if (jsonString == null) {
         print('No backup found');
-        return false;
+        return 0;
       }
 
       final backupData = json.decode(jsonString) as Map<String, dynamic>;
@@ -68,18 +70,30 @@ class CloudBackupService {
       for (var subJson in subscriptionsList) {
         try {
           final abo = Abo.fromJson(subJson as Map<String, dynamic>);
-          // Note: In production, you'd add this to controller
-          restoredCount++;
+          // Add to controller if not already exists
+          final exists = controller.abos.any((a) => a.id == abo.id);
+          if (!exists) {
+            controller.addAbo(
+              abo.name,
+              abo.price,
+              abo.isMonthly,
+              abo.startDate,
+              abo.endDate,
+              category: abo.category,
+              notes: abo.notes,
+            );
+            restoredCount++;
+          }
         } catch (e) {
           print('Error restoring subscription: $e');
         }
       }
 
       print('Restore successful: $restoredCount subscriptions');
-      return true;
+      return restoredCount;
     } catch (e) {
       print('Restore error: $e');
-      return false;
+      return 0;
     }
   }
 
@@ -105,6 +119,93 @@ class CloudBackupService {
     }
     
     return null;
+  }
+
+  /// Export backup to file.
+  Future<String> exportToFile(AboController controller) async {
+    try {
+      final abos = controller.abos;
+      final backupData = {
+        'version': '1.0',
+        'timestamp': DateTime.now().toIso8601String(),
+        'subscriptions': abos.map((abo) => abo.toJson()).toList(),
+      };
+
+      final jsonString = const JsonEncoder.withIndent('  ').convert(backupData);
+      
+      // Get documents directory
+      final directory = await getApplicationDocumentsDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = 'abotrack_backup_$timestamp.json';
+      final file = File('${directory.path}/$fileName');
+      
+      await file.writeAsString(jsonString);
+      
+      print('Export successful: ${file.path}');
+      return file.path;
+    } catch (e) {
+      print('Export error: $e');
+      rethrow;
+    }
+  }
+
+  /// Import backup from file.
+  Future<int> importFromFile(String filePath, AboController controller) async {
+    try {
+      final file = File(filePath);
+      if (!await file.exists()) {
+        throw Exception('File not found: $filePath');
+      }
+
+      final jsonString = await file.readAsString();
+      final backupData = json.decode(jsonString) as Map<String, dynamic>;
+      final subscriptionsList = backupData['subscriptions'] as List;
+
+      int importedCount = 0;
+      for (var subJson in subscriptionsList) {
+        try {
+          final abo = Abo.fromJson(subJson as Map<String, dynamic>);
+          // Add to controller if not already exists
+          final exists = controller.abos.any((a) => a.id == abo.id);
+          if (!exists) {
+            controller.addAbo(
+              abo.name,
+              abo.price,
+              abo.isMonthly,
+              abo.startDate,
+              abo.endDate,
+              category: abo.category,
+              notes: abo.notes,
+            );
+            importedCount++;
+          }
+        } catch (e) {
+          print('Error importing subscription: $e');
+        }
+      }
+
+      print('Import successful: $importedCount subscriptions');
+      return importedCount;
+    } catch (e) {
+      print('Import error: $e');
+      rethrow;
+    }
+  }
+
+  /// Get backup file size.
+  Future<int> getBackupSize() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString(_backupFileName);
+      
+      if (jsonString == null) {
+        return 0;
+      }
+      
+      return jsonString.length; // Approximate size in bytes
+    } catch (e) {
+      return 0;
+    }
   }
 
   /// Logout.
