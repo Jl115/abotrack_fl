@@ -1,6 +1,7 @@
 import 'package:abotrack_fl/src/components/base/drawer_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/aboo_list_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/analytics_component.dart';
+import 'package:abotrack_fl/src/components/dashboard/budget_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/chart_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/search_filter_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/upcoming_renewals_component.dart';
@@ -172,6 +173,8 @@ class DashboardView extends StatelessWidget {
                 : const AlwaysScrollableScrollPhysics(),
             children: [
               const ChartComponent(),
+              const SizedBox(height: 20),
+              const BudgetComponent(),
               const SizedBox(height: 20),
               const AnalyticsComponent(),
               const SizedBox(height: 20),
