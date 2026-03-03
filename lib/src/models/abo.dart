@@ -4,6 +4,7 @@ class Abo {
   DateTime endDate;
   double price;
   bool isMonthly; // True for monthly, false for yearly
+  String name;
   String? category; // Optional category (e.g., "Streaming", "Software", "Gym")
   String? notes; // Optional notes about the subscription
 
@@ -13,6 +14,7 @@ class Abo {
     required this.endDate,
     required this.price,
     required this.isMonthly,
+    required this.name,
     this.category,
     this.notes,
   });
@@ -37,6 +39,7 @@ class Abo {
         'endDate': endDate.toIso8601String(),
         'price': price,
         'isMonthly': isMonthly,
+        'name': name,
         if (category != null) 'category': category,
         if (notes != null) 'notes': notes,
       };
@@ -49,6 +52,7 @@ class Abo {
       endDate: DateTime.parse(json['endDate']),
       price: json['price'],
       isMonthly: json['isMonthly'],
+      name: json['name'],
       category: json['category'],
       notes: json['notes'],
     );

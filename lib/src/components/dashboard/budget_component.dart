@@ -34,7 +34,7 @@ class _BudgetComponentState extends State<BudgetComponent> {
     final theme = Theme.of(context);
     final aboController = Provider.of<AboController>(context);
     final monthlyCost = aboController.getMonthlyCost();
-    final percentageUsed = _monthlyBudget > 0 ? (monthlyCost / _monthlyBudget * 100).clamp(0, 100) : 0;
+    final percentageUsed = _monthlyBudget > 0 ? ((monthlyCost / _monthlyBudget * 100).clamp(0, 100)).toDouble() : 0.0;
     final remaining = _monthlyBudget - monthlyCost;
     final isOverBudget = remaining < 0;
 
@@ -288,7 +288,7 @@ class _BudgetComponentState extends State<BudgetComponent> {
             theme,
             'Monthly Budget',
             '\$${budget.toStringAsFixed(2)}',
-            Icons.budget,
+            Icons.account_balance_wallet,
           ),
           const SizedBox(height: 8),
           _buildBreakdownRow(

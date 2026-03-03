@@ -25,7 +25,7 @@ class BiometricService {
   /// Check if biometrics are enrolled on the device.
   Future<bool> isBiometricEnrolled() async {
     try {
-      return await _localAuth.isBiometricEnrolled();
+      return await _localAuth.isDeviceSupported();
     } catch (e) {
       print('Error checking biometric enrollment: $e');
       return false;

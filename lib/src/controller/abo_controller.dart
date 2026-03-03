@@ -2,80 +2,11 @@ import 'dart:convert';
 import 'dart:io' show Platform, File, Directory;
 
 import 'package:abotrack_fl/main.dart';
+import 'package:abotrack_fl/src/models/abo.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:path_provider/path_provider.dart';
-
-class Abo {
-  String id;
-  DateTime startDate;
-  DateTime endDate;
-  double price;
-  bool isMonthly;
-  String name;
-  String? category;
-  String? notes;
-
-  Abo({
-    required this.id,
-    required this.startDate,
-    required this.endDate,
-    required this.price,
-    required this.isMonthly,
-    required this.name,
-    this.category,
-    this.notes,
-  });
-
-  /// Converts this [Abo] object to a JSON-serializable map.
-  ///
-  /// The map contains the following keys:
-  ///
-  /// - 'id': The unique identifier of the Abo object.
-  /// - 'startDate': The start date of the Abo in ISO8601 format.
-  /// - 'endDate': The end date of the Abo in ISO8601 format.
-  /// - 'price': The monthly cost of the Abo.
-  /// - 'isMonthly': A boolean indicating whether the Abo is a monthly or yearly subscription.
-  /// - 'name': The name of the Abo.
-  ///
-  /// The map can be serialized to JSON using [jsonEncode].
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'startDate': startDate.toIso8601String(),
-        'endDate': endDate.toIso8601String(),
-        'price': price,
-        'isMonthly': isMonthly,
-        'name': name,
-        'category': category,
-        'notes': notes,
-      };
-
-  factory Abo.fromJson(Map<String, dynamic> json) {
-    return Abo(
-      id: json['id'],
-      startDate: DateTime.parse(json['startDate']),
-      endDate: DateTime.parse(json['endDate']),
-      price: json['price'],
-      isMonthly: json['isMonthly'],
-      name: json['name'],
-      category: json['category'],
-      notes: json['notes'],
-    );
-  }
-
-  /// Returns true if the subscription is active (not expired).
-  bool get isActive => endDate.isAfter(DateTime.now());
-
-  /// Returns true if the subscription expires within 7 days.
-  bool get expiresSoon {
-    final daysUntil = endDate.difference(DateTime.now()).inDays;
-    return daysUntil >= 0 && daysUntil <= 7;
-  }
-
-  /// Returns the number of days until expiration.
-  int get daysUntilExpiration => endDate.difference(DateTime.now()).inDays;
-}
 
 class AboController with ChangeNotifier {
   // Sorting state

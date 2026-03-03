@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controller/settings_controller.dart';
-import '../service/biometric_service.dart';
+import '../../controller/settings_controller.dart';
+import '../../service/biometric_service.dart';
 
 /// Security settings component for biometric authentication.
 class SecuritySettingsComponent extends StatefulWidget {

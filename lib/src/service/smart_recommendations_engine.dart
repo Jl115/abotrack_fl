@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
-import 'package:abotrack_fl/src/models/abo.dart';
 
 /// AI-powered smart recommendations engine for subscription optimization.
 class SmartRecommendationsEngine {
