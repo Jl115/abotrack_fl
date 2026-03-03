@@ -199,7 +199,7 @@ class _SmartRecommendationsComponentState extends State<SmartRecommendationsComp
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.savings,
               color: Colors.white,
               size: 32,
@@ -394,7 +394,7 @@ class _SmartRecommendationsComponentState extends State<SmartRecommendationsComp
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.attach_money,
                   size: 16,
                   color: Colors.green,

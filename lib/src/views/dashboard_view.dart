@@ -53,7 +53,7 @@ class DashboardView extends StatelessWidget {
               aboController.toggleSortOrder();
             },
           ),
-          IconButton(
+          const IconButton(
             icon: Icon(Icons.filter_list),
             tooltip: 'Filter subscriptions',
             onPressed: () {
@@ -67,7 +67,7 @@ class DashboardView extends StatelessWidget {
                   return StatefulBuilder(
                     builder: (context, setDialogState) {
                       return AlertDialog(
-                        title: Text('Filter Subscriptions'),
+                        title: const Text('Filter Subscriptions'),
                         content: SingleChildScrollView(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -76,7 +76,7 @@ class DashboardView extends StatelessWidget {
                               Text('Name:', style: theme.textTheme.labelLarge),
                               TextField(
                                 controller: nameController,
-                                decoration: InputDecoration(hintText: 'Enter name'),
+                                decoration: const InputDecoration(hintText: 'Enter name'),
                               ),
                               const SizedBox(height: 16),
                               Text('Date Range:', style: theme.textTheme.labelLarge),
@@ -137,13 +137,13 @@ class DashboardView extends StatelessWidget {
                               aboController.clearAllFilters();
                               Navigator.of(ctx).pop();
                             },
-                            child: Text('Clear'),
+                            child: const Text('Clear'),
                           ),
                           TextButton(
                             onPressed: () {
                               Navigator.of(ctx).pop();
                             },
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -151,7 +151,7 @@ class DashboardView extends StatelessWidget {
                               aboController.filterAbosByDateRange(startDate, endDate);
                               Navigator.of(ctx).pop();
                             },
-                            child: Text('Apply'),
+                            child: const Text('Apply'),
                           ),
                         ],
                       );

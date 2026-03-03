@@ -120,7 +120,7 @@ class AboController with ChangeNotifier {
       await file.writeAsString(JsonEncoder.withIndent('  ').convert(jsonList));
     } else {
       // CSV header
-      final header = 'id,name,startDate,endDate,price,isMonthly';
+      const header = 'id,name,startDate,endDate,price,isMonthly';
       final rows = _abos.map((a) => '${a.id},${a.name},${a.startDate.toIso8601String()},${a.endDate.toIso8601String()},${a.price},${a.isMonthly}').join('\n');
       await file.writeAsString('$header\n$rows');
     }
