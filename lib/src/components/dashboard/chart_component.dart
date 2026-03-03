@@ -37,6 +37,10 @@ class _ChartComponentState extends State<ChartComponent> {
   /// also filled in with a light blue color to make it easier to see the
   /// total cost of the abos for each month.
   Widget _buildLineChart(List<double> monthlyPayments) {
+    final theme = Theme.of(context);
+    final maxPayment = monthlyPayments.reduce((a, b) => a > b ? a : b);
+    final avgPayment = monthlyPayments.reduce((a, b) => a + b) / 12;
+    
     return Center(
       child: SizedBox(
         height: 350,
@@ -52,10 +56,18 @@ class _ChartComponentState extends State<ChartComponent> {
                     return Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(month,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium), // Use theme text style
+                          style: theme.textTheme.bodyMedium),
                     );
+                  },
+                ),
+              ),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 50,
+                  getTitlesWidget: (value, meta) {
+                    return Text('\$${value.toStringAsFixed(0)}',
+                        style: theme.textTheme.bodySmall);
                   },
                 ),
               ),
@@ -72,11 +84,15 @@ class _ChartComponentState extends State<ChartComponent> {
                 dotData: FlDotData(show: true),
                 belowBarData: BarAreaData(
                     show: true,
-                    color: Theme.of(context)
-                        .primaryColor
-                        .withOpacity(0.3)), // Use primary color with opacity
+                    color: theme.primaryColor.withOpacity(0.3)),
               ),
             ],
+            gridData: FlGridData(show: true),
+            borderData: FlBorderData(show: false),
+            minX: 0,
+            maxX: 11,
+            minY: 0,
+            maxY: maxPayment > 0 ? maxPayment * 1.2 : 100,
           ),
         ),
       ),
@@ -102,7 +118,9 @@ class _ChartComponentState extends State<ChartComponent> {
   ///
   /// The chart is centered horizontally and vertically.
   Widget _buildBarChart(List<double> monthlyPayments) {
+    final theme = Theme.of(context);
     final currentMonth = DateTime.now().month - 1; // 0-based index for month
+    final maxPayment = monthlyPayments.reduce((a, b) => a > b ? a : b);
 
     return Center(
       child: SizedBox(
@@ -118,9 +136,13 @@ class _ChartComponentState extends State<ChartComponent> {
                         BarChartRodData(
                           toY: entry.value,
                           color: entry.key == currentMonth
-                              ? Theme.of(context).colorScheme.error
-                              : Theme.of(context).primaryColor,
+                              ? theme.colorScheme.error
+                              : theme.primaryColor,
                           width: 16,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                          ),
                         ),
                       ],
                     ))
@@ -134,8 +156,7 @@ class _ChartComponentState extends State<ChartComponent> {
                         .format(DateTime(2024, value.toInt() + 1));
                     return Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(month,
-                          style: Theme.of(context).textTheme.bodyMedium),
+                      child: Text(month, style: theme.textTheme.bodyMedium),
                     );
                   },
                 ),
@@ -143,15 +164,18 @@ class _ChartComponentState extends State<ChartComponent> {
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 40,
+                  reservedSize: 50,
                   getTitlesWidget: (value, meta) {
-                    return Text(value.toStringAsFixed(0),
-                        style: Theme.of(context).textTheme.bodyMedium);
+                    return Text('\$${value.toStringAsFixed(0)}',
+                        style: theme.textTheme.bodySmall);
                   },
                 ),
               ),
             ),
             gridData: FlGridData(show: true),
+            borderData: FlBorderData(show: false),
+            minY: 0,
+            maxY: maxPayment > 0 ? maxPayment * 1.2 : 100,
           ),
         ),
       ),
@@ -175,30 +199,40 @@ class _ChartComponentState extends State<ChartComponent> {
   ///
   /// The chart is centered horizontally and vertically.
   Widget _buildPieChart(List<Abo> abos) {
+    final theme = Theme.of(context);
+    final totalCost = abos.fold<double>(0, (sum, abo) => sum + abo.price);
+    
     return Center(
       child: SizedBox(
         height: 350,
-        child: PieChart(
-          PieChartData(
-            sections: abos
-                .asMap()
-                .entries
-                .map((entry) => PieChartSectionData(
-                      color: _getColorForIndex(entry.key),
-                      value: entry.value.price,
-                      title:
-                          '${entry.value.name}\n${entry.value.price.toStringAsFixed(2)}',
-                      radius: 60,
-                      titleStyle:
-                          Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                    ))
-                .toList(),
-            sectionsSpace: 2,
-          ),
-        ),
+        child: abos.isEmpty
+            ? Center(
+                child: Text(
+                  'No subscriptions yet',
+                  style: theme.textTheme.bodyLarge,
+                ),
+              )
+            : PieChart(
+                PieChartData(
+                  sections: abos
+                      .asMap()
+                      .entries
+                      .map((entry) => PieChartSectionData(
+                            color: _getColorForIndex(entry.key),
+                            value: entry.value.price,
+                            title:
+                                '${entry.value.name}\n\$${entry.value.price.toStringAsFixed(2)}',
+                            radius: 60,
+                            titleStyle: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ))
+                      .toList(),
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 40,
+                ),
+              ),
       ),
     );
   }
@@ -238,6 +272,7 @@ class _ChartComponentState extends State<ChartComponent> {
   ///
   /// This method is called from the [DashboardView] widget.
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final aboController = Provider.of<AboController>(context);
 
     // Calculate monthly payments, converting yearly to equivalent monthly
@@ -248,36 +283,53 @@ class _ChartComponentState extends State<ChartComponent> {
       monthlyPayments[startMonth] += monthlyCost;
     }
 
+    final totalYearly = monthlyPayments.reduce((a, b) => a + b);
+    final avgMonthly = totalYearly / 12;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
-        height: 400,
+        height: 450,
         decoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          color: Theme.of(context)
-              .cardColor, // Use theme card color for background
+          color: theme.cardColor,
         ),
         child: Stack(
           children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    top: 16.0, bottom: 16.0, left: 16.0, right: 16.0),
-                child: _currentGraph == 0
-                    ? _buildLineChart(monthlyPayments)
-                    : _currentGraph == 1
-                        ? _buildBarChart(monthlyPayments)
-                        : _buildPieChart(aboController.abos),
-              ),
+            Column(
+              children: [
+                // Stats summary at top
+                Padding(
+                  padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildStatChip('Total', '\$${totalYearly.toStringAsFixed(0)}', theme),
+                      _buildStatChip('Avg/Month', '\$${avgMonthly.toStringAsFixed(0)}', theme),
+                      _buildStatChip('Subscriptions', '${aboController.abos.length}', theme),
+                    ],
+                  ),
+                ),
+                // Chart area
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _currentGraph == 0
+                        ? _buildLineChart(monthlyPayments)
+                        : _currentGraph == 1
+                            ? _buildBarChart(monthlyPayments)
+                            : _buildPieChart(aboController.abos),
+                  ),
+                ),
+              ],
             ),
             Positioned(
               top: 8,
               right: 8,
               child: IconButton(
-                icon: Icon(Icons.swap_horiz,
-                    color: Theme.of(context).iconTheme.color),
+                icon: Icon(Icons.swap_horiz, color: theme.iconTheme.color),
                 onPressed: _changeGraph,
                 tooltip: 'Change Graph',
               ),
@@ -285,6 +337,26 @@ class _ChartComponentState extends State<ChartComponent> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Builds a small stat chip for displaying summary statistics.
+  Widget _buildStatChip(String label, String value, ThemeData theme) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          value,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.primaryColor,
+          ),
+        ),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall,
+        ),
+      ],
     );
   }
 }
