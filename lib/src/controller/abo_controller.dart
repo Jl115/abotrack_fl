@@ -57,6 +57,27 @@ class Abo {
 }
 
 class AboController with ChangeNotifier {
+  // Sorting state
+  bool _sortAscending = true;
+
+  bool get sortAscending => _sortAscending;
+
+  /// Toggle sort order and apply sorting.
+  void toggleSortOrder() {
+    _sortAscending = !_sortAscending;
+    sortAbosByStartDate(_sortAscending);
+  }
+
+  /// Sort the abo list by start date.
+  void sortAbosByStartDate(bool ascending) {
+    _abos.sort((a, b) => ascending
+        ? a.startDate.compareTo(b.startDate)
+        : b.startDate.compareTo(a.startDate));
+    // Reset any filtered view to reflect new order.
+    _filteredAbos = [];
+    notifyListeners();
+  }
+
   List<Abo> _abos = [];
   List<Abo> _filteredAbos = [];
 
@@ -66,7 +87,20 @@ class AboController with ChangeNotifier {
   /// abos. The file is named "abos.json" and is located in the app's
   /// application document directory.
   Future<File> _getAboFile() async {
-    final directory = await getApplicationDocumentsDirectory();
+    // Filtering state
+  String _filterQuery = '';
+
+  /// Apply a name filter to the list of abos.
+  void filterAbosByName(String query) {
+    _filterQuery = query.toLowerCase();
+    if (_filterQuery.isEmpty) {
+      _filteredAbos = [];
+    } else {
+      _filteredAbos = _abos.where((abo) => abo.name.toLowerCase().contains(_filterQuery)).toList();
+    }
+    notifyListeners();
+  }
+
     return File('${directory.path}/abos.json');
   }
 

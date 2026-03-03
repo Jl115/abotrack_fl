@@ -40,6 +40,15 @@ class DashboardView extends StatelessWidget {
         shadowColor: Colors.transparent,
         elevation: 0,
         toolbarOpacity: 1,
+        actions: [
+          IconButton(
+            icon: Icon(aboController.sortAscending ? Icons.arrow_upward : Icons.arrow_downward),
+            tooltip: 'Sort by start date',
+            onPressed: () {
+              aboController.toggleSortOrder();
+            },
+          ),
+        ],
       ),
       extendBodyBehindAppBar: true,
       extendBody: true,
