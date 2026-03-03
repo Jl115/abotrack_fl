@@ -18,110 +18,328 @@ class SettingsView extends StatelessWidget {
   /// for changing the password.
   Widget build(BuildContext context) {
     final settingsController = Provider.of<SettingsController>(context);
-    final theme = Theme.of(context); // Get the current theme
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor:
-          theme.scaffoldBackgroundColor, // Use theme background color
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Settings'),
-        backgroundColor:
-            theme.appBarTheme.backgroundColor, // Use theme AppBar color
+        backgroundColor: theme.appBarTheme.backgroundColor,
       ),
       drawer: drawer.customDrawer(context),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Container(
-          width: 435,
-          height: 896,
-          decoration: ShapeDecoration(
-            color: theme.cardColor, // Use theme card color
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            // App Info Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: ShapeDecoration(
+                color: theme.cardColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 48,
+                    color: theme.primaryColor,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'AboTrack',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Version 1.0.0',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.disabledColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Track and manage your subscriptions',
+                    style: theme.textTheme.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 35),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 50,
-                      width: 60,
-                      child: Center(
-                        child: Text(
-                          'Theme',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ), // Use theme text style and customize as needed
+            const SizedBox(height: 24),
+            // Theme Settings Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: ShapeDecoration(
+                color: theme.cardColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.palette_outlined,
+                        color: theme.primaryColor,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Appearance',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 50),
-                    DropdownButton<ThemeMode>(
-                      dropdownColor:
-                          theme.cardColor, // Adapt dropdown background to theme
-                      value: settingsController.themeMode,
-                      onChanged: settingsController.updateThemeMode,
-                      items: [
-                        DropdownMenuItem(
-                          value: ThemeMode.system,
-                          child: Text(
-                            'System Theme',
-                            style: theme
-                                .textTheme.bodyMedium, // Use theme text style
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: ThemeMode.light,
-                          child: Text(
-                            'Light Theme',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: ThemeMode.dark,
-                          child: Text(
-                            'Dark Theme',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: () =>
-                      _showChangePasswordDialog(context, settingsController),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        theme.primaryColor, // Use theme's primary color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    minimumSize: const Size(200, 50),
+                    ],
                   ),
-                  child: Text(
-                    'Change Password',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme
-                          .onPrimary, // Text color should contrast with button color
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Theme',
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                      DropdownButton<ThemeMode>(
+                        dropdownColor: theme.cardColor,
+                        value: settingsController.themeMode,
+                        onChanged: settingsController.updateThemeMode,
+                        items: [
+                          DropdownMenuItem(
+                            value: ThemeMode.system,
+                            child: Text('System'),
+                          ),
+                          DropdownMenuItem(
+                            value: ThemeMode.light,
+                            child: Text('Light'),
+                          ),
+                          DropdownMenuItem(
+                            value: ThemeMode.dark,
+                            child: Text('Dark'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: 24),
+            // Data Management Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: ShapeDecoration(
+                color: theme.cardColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.storage_outlined,
+                        color: theme.primaryColor,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Data Management',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => _exportData(context, settingsController),
+                          icon: const Icon(Icons.download),
+                          label: const Text('Export'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.primaryColor,
+                            foregroundColor: theme.colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => _importData(context, settingsController),
+                          icon: const Icon(Icons.upload),
+                          label: const Text('Import'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.primaryColor,
+                            foregroundColor: theme.colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Account Settings Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: ShapeDecoration(
+                color: theme.cardColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.lock_outline,
+                        color: theme.primaryColor,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Security',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => _showChangePasswordDialog(context, settingsController),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.primaryColor,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.lock_reset),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Change Password',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  /// Export data dialog
+  void _exportData(BuildContext context, SettingsController settingsController) {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: theme.cardColor,
+        title: const Text('Export Data'),
+        content: Text('Choose export format:', style: theme.textTheme.bodyMedium),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // TODO: Implement export logic
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Export feature coming soon!')),
+              );
+              Navigator.pop(ctx);
+            },
+            child: const Text('JSON'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // TODO: Implement export logic
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Export feature coming soon!')),
+              );
+              Navigator.pop(ctx);
+            },
+            child: const Text('CSV'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Import data dialog
+  void _importData(BuildContext context, SettingsController settingsController) {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: theme.cardColor,
+        title: const Text('Import Data'),
+        content: Text('Choose import format:', style: theme.textTheme.bodyMedium),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // TODO: Implement import logic
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Import feature coming soon!')),
+              );
+              Navigator.pop(ctx);
+            },
+            child: const Text('JSON'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // TODO: Implement import logic
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Import feature coming soon!')),
+              );
+              Navigator.pop(ctx);
+            },
+            child: const Text('CSV'),
+          ),
+        ],
       ),
     );
   }
