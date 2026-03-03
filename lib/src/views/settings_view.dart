@@ -1,6 +1,7 @@
 import 'package:abotrack_fl/src/components/base/drawer_component.dart';
 import 'package:abotrack_fl/src/components/settings/email_notification_settings_component.dart';
 import 'package:abotrack_fl/src/components/settings/security_settings_component.dart';
+import 'package:abotrack_fl/src/components/settings/widget_settings_component.dart';
 import 'package:abotrack_fl/src/service/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -205,6 +206,9 @@ class SettingsView extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+            // Widget Settings
+            const WidgetSettingsComponent(),
             const SizedBox(height: 24),
             // Email Notification Settings
             const EmailNotificationSettingsComponent(),
