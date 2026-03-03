@@ -4,6 +4,7 @@ import 'package:abotrack_fl/src/components/dashboard/analytics_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/budget_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/chart_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/search_filter_component.dart';
+import 'package:abotrack_fl/src/components/dashboard/smart_recommendations_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/upcoming_renewals_component.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
 
@@ -175,6 +176,8 @@ class DashboardView extends StatelessWidget {
               const ChartComponent(),
               const SizedBox(height: 20),
               const BudgetComponent(),
+              const SizedBox(height: 20),
+              const SmartRecommendationsComponent(),
               const SizedBox(height: 20),
               const AnalyticsComponent(),
               const SizedBox(height: 20),
