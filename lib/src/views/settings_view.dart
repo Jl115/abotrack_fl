@@ -1,4 +1,5 @@
 import 'package:abotrack_fl/src/components/base/drawer_component.dart';
+import 'package:abotrack_fl/src/components/settings/cloud_backup_settings_component.dart';
 import 'package:abotrack_fl/src/components/settings/email_notification_settings_component.dart';
 import 'package:abotrack_fl/src/components/settings/security_settings_component.dart';
 import 'package:abotrack_fl/src/components/settings/widget_settings_component.dart';
@@ -206,6 +207,9 @@ class SettingsView extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+            // Cloud Backup Settings
+            const CloudBackupSettingsComponent(),
             const SizedBox(height: 24),
             // Widget Settings
             const WidgetSettingsComponent(),

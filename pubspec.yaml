@@ -36,6 +36,8 @@ dev_dependencies:
   local_auth: ^2.3.0
   mailer: ^6.0.1
   home_widget: ^0.4.1
+  googleapis_auth: ^1.4.1
+  http: ^1.1.0
 
 flutter:
   uses-material-design: true
