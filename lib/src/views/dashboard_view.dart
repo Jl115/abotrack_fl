@@ -1,5 +1,6 @@
 import 'package:abotrack_fl/src/components/base/drawer_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/aboo_list_component.dart';
+import 'package:abotrack_fl/src/components/dashboard/analytics_component.dart';
 import 'package:abotrack_fl/src/components/dashboard/chart_component.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
 
@@ -165,10 +166,12 @@ class DashboardView extends StatelessWidget {
         children: [
           ListView(
             physics: Theme.of(context).platform == TargetPlatform.iOS
-                ? const ClampingScrollPhysics() // For a more rigid scroll on iOS
-                : const AlwaysScrollableScrollPhysics(), // Allow normal scroll on Android
+                ? const ClampingScrollPhysics()
+                : const AlwaysScrollableScrollPhysics(),
             children: const [
               ChartComponent(),
+              SizedBox(height: 20),
+              AnalyticsComponent(),
               SizedBox(height: 20),
               AboListComponent(),
             ],
