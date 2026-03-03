@@ -97,6 +97,63 @@ class AboController with ChangeNotifier {
 
   // Filtering state
   String _filterQuery = '';
+  DateTime? _filterStartDate;
+  DateTime? _filterEndDate;
+
+  /// Get current filter query
+  String get filterQuery => _filterQuery;
+
+  /// Get current filter start date
+  DateTime? get filterStartDate => _filterStartDate;
+
+  /// Get current filter end date
+  DateTime? get filterEndDate => _filterEndDate;
+
+  /// Apply a name filter to the list of abos.
+  void filterAbosByName(String query) {
+    _filterQuery = query.toLowerCase();
+    _applyFilters();
+  }
+
+  /// Set date range filter for subscriptions.
+  void filterAbosByDateRange(DateTime? startDate, DateTime? endDate) {
+    _filterStartDate = startDate;
+    _filterEndDate = endDate;
+    _applyFilters();
+  }
+
+  /// Clear all filters and reset to show all abos.
+  void clearAllFilters() {
+    _filterQuery = '';
+    _filterStartDate = null;
+    _filterEndDate = null;
+    _filteredAbos.clear();
+    notifyListeners();
+  }
+
+  /// Apply all active filters (name and date range).
+  void _applyFilters() {
+    if (_filterQuery.isEmpty && _filterStartDate == null && _filterEndDate == null) {
+      _filteredAbos.clear();
+    } else {
+      _filteredAbos = _abos.where((abo) {
+        // Name filter
+        bool nameMatches = _filterQuery.isEmpty || abo.name.toLowerCase().contains(_filterQuery);
+        
+        // Date range filter
+        bool dateMatches = true;
+        if (_filterStartDate != null && abo.startDate.isBefore(_filterStartDate!)) {
+          dateMatches = false;
+        }
+        if (_filterEndDate != null && abo.endDate.isAfter(_filterEndDate!)) {
+          dateMatches = false;
+        }
+        
+        return nameMatches && dateMatches;
+      }).toList();
+    }
+    notifyListeners();
+  }
 
   /// Export the list of subscriptions to a file in JSON or CSV format.
   /// The file is saved in the app's documents directory.
@@ -117,6 +174,67 @@ class AboController with ChangeNotifier {
     }
     print('Exported subscriptions to ${file.path}');
     return file.path;
+  }
+
+  /// Import subscriptions from a JSON or CSV file.
+  /// Returns the number of subscriptions imported.
+  Future<int> importAbos(String filePath, {required bool asJson}) async {
+    final file = File(filePath);
+    if (!await file.exists()) {
+      throw Exception('File not found: $filePath');
+    }
+    
+    int importedCount = 0;
+    if (asJson) {
+      final jsonString = await file.readAsString();
+      final List<dynamic> jsonList = json.decode(jsonString);
+      for (var jsonItem in jsonList) {
+        try {
+          final abo = Abo.fromJson(jsonItem);
+          // Check for duplicate ID
+          if (_abos.indexWhere((a) => a.id == abo.id) == -1) {
+            _abos.add(abo);
+            importedCount++;
+          }
+        } catch (e) {
+          print('Error importing subscription: $e');
+        }
+      }
+    } else {
+      final lines = await file.readAsLines();
+      if (lines.isEmpty) return 0;
+      
+      // Skip header line
+      for (int i = 1; i < lines.length; i++) {
+        try {
+          final parts = lines[i].split(',');
+          if (parts.length >= 6) {
+            final abo = Abo(
+              id: parts[0],
+              name: parts[1],
+              startDate: DateTime.parse(parts[2]),
+              endDate: DateTime.parse(parts[3]),
+              price: double.parse(parts[4]),
+              isMonthly: parts[5].toLowerCase() == 'true',
+            );
+            // Check for duplicate ID
+            if (_abos.indexWhere((a) => a.id == abo.id) == -1) {
+              _abos.add(abo);
+              importedCount++;
+            }
+          }
+        } catch (e) {
+          print('Error importing subscription from line ${i + 1}: $e');
+        }
+      }
+    }
+    
+    if (importedCount > 0) {
+      saveAbos();
+      notifyListeners();
+    }
+    print('Imported $importedCount subscriptions from $filePath');
+    return importedCount;
   }
 
 

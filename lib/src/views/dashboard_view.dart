@@ -49,34 +49,108 @@ class DashboardView extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.search),
-            tooltip: 'Filter subscriptions by name',
+            icon: Icon(Icons.filter_list),
+            tooltip: 'Filter subscriptions',
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (ctx) {
-                  final TextEditingController filterController = TextEditingController();
-                  return AlertDialog(
-                    title: Text('Filter Subscriptions'),
-                    content: TextField(
-                      controller: filterController,
-                      decoration: InputDecoration(hintText: 'Enter name'),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(ctx).pop();
-                        },
-                        child: Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          aboController.filterAbosByName(filterController.text);
-                          Navigator.of(ctx).pop();
-                        },
-                        child: Text('Apply'),
-                      ),
-                    ],
+                  final TextEditingController nameController = TextEditingController(text: aboController.filterQuery);
+                  DateTime? startDate = aboController.filterStartDate;
+                  DateTime? endDate = aboController.filterEndDate;
+                  
+                  return StatefulBuilder(
+                    builder: (context, setDialogState) {
+                      return AlertDialog(
+                        title: Text('Filter Subscriptions'),
+                        content: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Name:', style: theme.textTheme.labelLarge),
+                              TextField(
+                                controller: nameController,
+                                decoration: InputDecoration(hintText: 'Enter name'),
+                              ),
+                              const SizedBox(height: 16),
+                              Text('Date Range:', style: theme.textTheme.labelLarge),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('From:', style: theme.textTheme.bodySmall),
+                                        TextButton(
+                                          onPressed: () async {
+                                            DateTime? picked = await showDatePicker(
+                                              context: context,
+                                              initialDate: startDate ?? DateTime.now(),
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(2100),
+                                            );
+                                            if (picked != null) {
+                                              setDialogState(() => startDate = picked);
+                                            }
+                                          },
+                                          child: Text(startDate?.toLocal().toString().split(' ')[0] ?? 'Any'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('To:', style: theme.textTheme.bodySmall),
+                                        TextButton(
+                                          onPressed: () async {
+                                            DateTime? picked = await showDatePicker(
+                                              context: context,
+                                              initialDate: endDate ?? DateTime.now(),
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(2100),
+                                            );
+                                            if (picked != null) {
+                                              setDialogState(() => endDate = picked);
+                                            }
+                                          },
+                                          child: Text(endDate?.toLocal().toString().split(' ')[0] ?? 'Any'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              aboController.clearAllFilters();
+                              Navigator.of(ctx).pop();
+                            },
+                            child: Text('Clear'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(ctx).pop();
+                            },
+                            child: Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              aboController.filterAbosByName(nameController.text);
+                              aboController.filterAbosByDateRange(startDate, endDate);
+                              Navigator.of(ctx).pop();
+                            },
+                            child: Text('Apply'),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
               );
