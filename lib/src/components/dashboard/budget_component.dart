@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
-import 'package:intl/intl.dart';
 
 /// Budget tracking component for monitoring subscription spending against limits.
 class BudgetComponent extends StatefulWidget {

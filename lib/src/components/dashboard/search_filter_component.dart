@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
-import 'package:intl/intl.dart';
 
 /// Search and filter component for subscriptions.
 class SearchFilterComponent extends StatefulWidget {

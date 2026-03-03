@@ -1,9 +1,7 @@
-import 'dart:io' show Platform, File, Directory;
+import 'dart:io' show Platform;
 
 import 'package:abotrack_fl/main.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
 

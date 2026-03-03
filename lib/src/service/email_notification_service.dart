@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:shared_preferences/shared_preferences.dart';

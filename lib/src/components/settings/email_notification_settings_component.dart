@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../controller/settings_controller.dart';
 import '../../service/email_notification_service.dart';
 
 /// Email notification settings component.

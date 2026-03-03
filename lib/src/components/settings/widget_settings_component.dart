@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:abotrack_fl/src/controller/abo_controller.dart';
 import 'package:abotrack_fl/src/service/widget_service.dart';
-import 'package:intl/intl.dart';
 
 /// Settings component for configuring home screen widgets.
 class WidgetSettingsComponent extends StatefulWidget {
