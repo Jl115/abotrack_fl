@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, File, Directory;
 
 import 'package:abotrack_fl/main.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +44,6 @@ class NotificationService {
   /// Handle notification tap.
   void _onNotificationTapped(NotificationResponse response) {
     // Navigate to dashboard when notification is tapped
-    final navigatorKey = GlobalKey<NavigatorState>();
     navigatorKey.currentState?.pushNamed('/dashboard');
   }
 
@@ -112,10 +110,11 @@ class NotificationService {
     final now = DateTime.now();
     
     for (final abo in controller.abos) {
-      if (abo.expiresSoon && abo.isActive) {
+      final daysUntil = abo.endDate.difference(now).inDays;
+      if (daysUntil <= 7 && daysUntil >= 0) {
         await scheduleExpiringReminder(
           subscriptionName: abo.name,
-          daysUntilExpiration: abo.daysUntilExpiration,
+          daysUntilExpiration: daysUntil,
           subscriptionId: abo.id,
         );
       }

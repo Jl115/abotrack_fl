@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:abotrack_fl/src/localization/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:abotrack_fl/main.dart';
 
 import 'controller/settings_controller.dart';
-
-// Define the global navigatorKey
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

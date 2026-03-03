@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, File, Directory;
 
 import 'package:abotrack_fl/main.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +14,8 @@ class Abo {
   double price;
   bool isMonthly;
   String name;
+  String? category;
+  String? notes;
 
   Abo({
     required this.id,
@@ -23,6 +24,8 @@ class Abo {
     required this.price,
     required this.isMonthly,
     required this.name,
+    this.category,
+    this.notes,
   });
 
   /// Converts this [Abo] object to a JSON-serializable map.
@@ -44,6 +47,8 @@ class Abo {
         'price': price,
         'isMonthly': isMonthly,
         'name': name,
+        'category': category,
+        'notes': notes,
       };
 
   factory Abo.fromJson(Map<String, dynamic> json) {
@@ -54,8 +59,22 @@ class Abo {
       price: json['price'],
       isMonthly: json['isMonthly'],
       name: json['name'],
+      category: json['category'],
+      notes: json['notes'],
     );
   }
+
+  /// Returns true if the subscription is active (not expired).
+  bool get isActive => endDate.isAfter(DateTime.now());
+
+  /// Returns true if the subscription expires within 7 days.
+  bool get expiresSoon {
+    final daysUntil = endDate.difference(DateTime.now()).inDays;
+    return daysUntil >= 0 && daysUntil <= 7;
+  }
+
+  /// Returns the number of days until expiration.
+  int get daysUntilExpiration => endDate.difference(DateTime.now()).inDays;
 }
 
 class AboController with ChangeNotifier {
